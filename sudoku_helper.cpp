@@ -190,9 +190,9 @@ struct Puzzle {
     }
     bool nextSlot() //Brennan
     {
-    	if (currentX==dim)
+    	if (currentX==dim-1)
     	{
-    		if (currentY!=dim)
+    		if (currentY!=dim-1)
     		{
     			currentX=0;
     			currentY+=1;
@@ -220,7 +220,7 @@ struct Puzzle {
     	{
 			if (currentY!=0)
 			{
-				currentX=dim;
+				currentX=dim-1;
 				currentY-=1;
 			}
 			else
