@@ -54,15 +54,14 @@ struct CandidateList {
       conflicts[num] = conflicts[num] + change;
     }
 
-    int numConflicts() //Brennan
-    {
-    	int sum = 0;
-    	for (int i = 0; i < dim; i++)
-    	{
-    		sum+=conflicts[i];
-    	}
-    	return sum;
-    }
+    bool checkCandidates(int x, int y) //Brennan
+	{
+		for (int i = 0; i<dim; i++)
+		{
+			if (conflicts[i]==0) return true;
+		}
+		return false;
+	}
 
 };
 
@@ -175,11 +174,6 @@ struct Puzzle {
       }
     }
     
-    bool checkCandidates(int x, int y) //Brennan
-    {
-		int conflicts = currentCandidates[x][y]->numConflicts();
-		return (conflicts>-1 && conflicts<dim);
-    }
     void resetCandidates(int x, int y) //Brennan
     {
     	currentCandidates[x][y]=initCandidates[x][y];
