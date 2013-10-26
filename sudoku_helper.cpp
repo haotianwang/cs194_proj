@@ -250,7 +250,7 @@ struct Puzzle {
 
     void removeAndInvalidate(int x, int y) //Brennan
     {
-    	currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]);
+    	currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]-1);
     	sudoku[x][y]=-1;
     }
 
