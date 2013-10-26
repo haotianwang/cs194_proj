@@ -219,7 +219,26 @@ struct Puzzle {
     }// haotian
 
     // assigns next number in currentCandidateList to x,y, returns success/failure
-    bool assign(int x, int y); // haotian
+    bool assign(int x, int y) {
+      int toBeAssigned = nextCandidate(x, y);
+      if (toBeAssigned == -1) {
+        return false;
+      }
+      else {
+        sudoku[x][y] = toBeAssigned;
+        return true;
+      }
+    }
+    
+    int nextCandidate(int x, int  y) {
+      CandidateList* list = currentCandidates[x][y];
+      for (int i = 0; i < list->dim; i++) {
+        if (list->conflicts[i] == 0) {
+          return i+1;
+        }
+      }
+      return -1;
+    }
 };
 
 
