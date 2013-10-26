@@ -53,6 +53,17 @@ struct CandidateList {
       num = num - 1;
       conflicts[num] = conflicts[num] + change;
     }
+
+    int numConflicts() //Brennan
+    {
+    	int sum = 0;
+    	for (int i = 0; i < dim; i++)
+    	{
+    		sum+=conflicts[i];
+    	}
+    	return sum;
+    }
+
 };
 
 struct Puzzle {
@@ -62,7 +73,7 @@ struct Puzzle {
   bool initialized;
   
   // need to initialize this
-  int currentX;
+ int currentX;
 	int currentY;
 	bool** preassigned;
 	CandidateList*** initCandidates;
@@ -164,14 +175,89 @@ struct Puzzle {
       }
     }
     
-    bool checkCandidates(int x, int y);
-    void resetCandidates(int x, int y);
-    void copyCandidates(int x, int y);
-    bool nextSlot();
-    bool prevSlot();
-    int getCurrentX();
-    int getCurrentY();
-    void removeAndInvalidate(int x, int y);
+    bool checkCandidates(int x, int y) //Brennan
+    {
+		int conflicts = currentCandidates[x][y]->numConflicts();
+		return (conflicts>-1 && conflicts<dim);
+    }
+    void resetCandidates(int x, int y) //Brennan
+    {
+    	currentCandidates[x][y]=initCandidates[x][y];
+    }
+    void copyCandidates(int x, int y) //Brennan
+    {
+    	initCandidates[x][y]=currentCandidates[x][y];
+    }
+    bool nextSlot() //Brennan
+    {
+    	if (currentX==dim)
+    	{
+    		if (currentY!=dim)
+    		{
+    			currentX=0;
+    			currentY+=1;
+    		}
+    		else
+    		{
+    			return false;
+    		}
+    	}
+    	else
+    	{
+    		currentX+=1;
+    	}
+
+    	if (preassigned[currentX][currentY]==true)
+    	{
+    		return nextSlot();
+    	}
+
+    	return true;
+    }
+    bool prevSlot() //Brennan
+    {
+    	if (currentX==0)
+    	{
+			if (currentY!=0)
+			{
+				currentX=dim;
+				currentY-=1;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+    	{
+    		currentX-=1;
+    	}
+
+    	if (preassigned[currentX][currentY]==true)
+    	{
+    		return prevSlot();
+    	}
+
+    	return true;
+    }
+    int getCurrentX() //Brennan
+    {
+    	return currentX;
+    }
+    int getCurrentY() //Brennan
+    {
+    	return currentY;
+    }
+
+    void removeAndInvalidate(int x, int y) //Brennan
+    {
+    	//may not need to deinitialize as initialize seems to overwrite
+    	//unclear about representation of assignment as opposed to conflicts?
+    	//for now, assuming that resetting CandidateList serves this purpose
+    	currentCandidates[x][y]->deinitialize();
+    	currentCandidates[x][y]->initialize();
+
+    }
 
     //the conflicts count of x, y, number i's conflicts gets incremented by delta
     void changeConflicts(int x, int y, int i, int delta, bool initialList) {
