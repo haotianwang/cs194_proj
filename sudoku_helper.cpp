@@ -63,11 +63,6 @@ struct CandidateList {
 		return false;
 	}
 
-    void invalidateCandidate(int i)
-    {
-    	conflicts[i]=-1;
-    }
-
 };
 
 struct Puzzle {
@@ -250,8 +245,12 @@ struct Puzzle {
 
     void removeAndInvalidate(int x, int y) //Brennan
     {
-    	currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]-1);
-    	sudoku[x][y]=-1;
+    	//may not need to deinitialize as initialize seems to overwrite
+    	//unclear about representation of assignment as opposed to conflicts?
+    	//for now, assuming that resetting CandidateList serves this purpose
+    	currentCandidates[x][y]->deinitialize();
+    	currentCandidates[x][y]->initialize();
+
     }
 
     //the conflicts count of x, y, number i's conflicts gets incremented by delta
