@@ -15,6 +15,8 @@ int main(int argc, char *argv[]) {
   int** grid = fileTo2dArray(argv[1], atoi(argv[2]));
   Puzzle p = Puzzle(grid, atoi(argv[2]));
   p.initialize();
+
+  
   
   p.printGridDim();
   p.printGrid();

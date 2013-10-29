@@ -54,7 +54,7 @@ struct CandidateList {
       conflicts[num] = conflicts[num] + change;
     }
 
-    bool checkCandidates(int x, int y) //Brennan
+    bool checkCandidates() //Brennan
 	{
 		for (int i = 0; i<dim; i++)
 		{
@@ -77,7 +77,7 @@ struct Puzzle {
   bool initialized;
   
   // need to initialize this
- int currentX;
+  int currentX;
 	int currentY;
 	bool** preassigned;
 	CandidateList*** initCandidates;
@@ -187,6 +187,11 @@ struct Puzzle {
     {
     	initCandidates[x][y]=currentCandidates[x][y];
     }
+    
+    bool checkCandidates(int x, int y) {
+      return initCandidates[x][y]->checkCandidates();
+    }
+    
     bool nextSlot() //Brennan
     {
     	if (currentX==dim-1)
@@ -248,6 +253,10 @@ struct Puzzle {
     	return currentY;
     }
 
+    int getCurrentAssigned(int x, int y) {
+      return sudoku[x][y];
+    }
+    
     void removeAndInvalidate(int x, int y) //Brennan
     {
       currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]-1);
@@ -311,7 +320,7 @@ struct Puzzle {
       }
     }
     
-    int nextCandidate(int x, int  y) {
+    int nextCandidate(int x, int y) {
       CandidateList* list = currentCandidates[x][y];
       for (int i = 0; i < list->dim; i++) {
         if (list->conflicts[i] == 0) {
@@ -319,6 +328,27 @@ struct Puzzle {
         }
       }
       return -1;
+    }
+
+    bool isSolved() {
+      if (currentX != dim - 1 || currentY != dim - 1) {
+        return false;
+      }
+      
+      for (int i = 0; i < dim; i++) {
+        for (int j = 0; j < dim; j++) {
+          if (getCurrentAssigned(i, j) < 1) {
+            printf("error: got to end but a number is unassigned\n");
+            exit(1);
+          }
+        }
+      }
+      
+      if (getCurrentAssigned(dim-1, dim-1) < 1) {
+        return false;
+      }
+      
+      return true;
     }
 };
 
