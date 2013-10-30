@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <math.h>
 
 void delete2dIntArray(int** array, int dim);
 void delete2dBoolArray(bool** array, int dim);
@@ -77,8 +78,9 @@ struct Puzzle {
   bool initialized;
   
   // need to initialize this
-  int currentX;
-	int currentY;
+  int currentRow;
+	int currentCol;
+  int blockSize;
 	bool** preassigned;
 	CandidateList*** initCandidates;
 	CandidateList*** currentCandidates;
@@ -87,15 +89,24 @@ struct Puzzle {
     Puzzle(int** grid, int dimInput) {
       sudoku = grid;
       dim = dimInput;
+      blockSize = (int) sqrt ((float) dim);
       initialized = false;
     }
     
     void initialize() {
-      currentX = 0;
-      currentY = 0;
+      printf("starting initialize\n");
       setupPreassigned();
+      printf("preassigned set\n");
       setupCandidateLists();
+      printf("candidate lists set\n");
+      currentCol = 0;
+      currentRow = 0;
+      while (preassigned[currentRow][currentCol]) {
+        nextSlot();
+      }
+      copyCandidates(currentRow, currentCol);
       initialized = true;
+      printf("initialized\n");
     }
     
     void deinitialize() {
@@ -179,27 +190,23 @@ struct Puzzle {
       }
     }
     
-    void resetCandidates(int x, int y) //Brennan
+    void copyCandidates(int x, int y) //Brennan
     {
     	currentCandidates[x][y]=initCandidates[x][y];
     }
-    void copyCandidates(int x, int y) //Brennan
+    void resetCandidates(int x, int y) //Brennan
     {
     	initCandidates[x][y]=currentCandidates[x][y];
     }
     
-    bool checkCandidates(int x, int y) {
-      return initCandidates[x][y]->checkCandidates();
-    }
-    
     bool nextSlot() //Brennan
     {
-    	if (currentX==dim-1)
+    	if (currentCol==dim-1)
     	{
-    		if (currentY!=dim-1)
+    		if (currentRow!=dim-1)
     		{
-    			currentX=0;
-    			currentY+=1;
+    			currentCol=0;
+    			currentRow+=1;
     		}
     		else
     		{
@@ -208,24 +215,26 @@ struct Puzzle {
     	}
     	else
     	{
-    		currentX+=1;
+    		currentCol+=1;
     	}
 
-    	if (preassigned[currentX][currentY]==true)
+    	if (preassigned[currentRow][currentCol] ==true)
     	{
     		return nextSlot();
     	}
 
     	return true;
     }
+    
+    
     bool prevSlot() //Brennan
     {
-    	if (currentX==0)
+    	if (currentCol==0)
     	{
-			if (currentY!=0)
+			if (currentRow!=0)
 			{
-				currentX=dim-1;
-				currentY-=1;
+				currentCol=dim-1;
+				currentRow-=1;
 			}
 			else
 			{
@@ -234,23 +243,25 @@ struct Puzzle {
 		}
 		else
     	{
-    		currentX-=1;
+    		currentCol-=1;
     	}
 
-    	if (preassigned[currentX][currentY]==true)
+    	if (preassigned[currentRow][currentCol]==true)
     	{
     		return prevSlot();
     	}
 
     	return true;
     }
-    int getCurrentX() //Brennan
+    
+    
+    int getCurrentRow() //Brennan
     {
-    	return currentX;
+    	return currentRow;
     }
-    int getCurrentY() //Brennan
+    int getCurrentCol() //Brennan
     {
-    	return currentY;
+    	return currentCol;
     }
 
     int getCurrentAssigned(int x, int y) {
@@ -275,6 +286,10 @@ struct Puzzle {
       list->changeConflict(i, delta);
     }
     
+    bool checkCandidates(int x, int y) {
+      return initCandidates[x][y]->checkCandidates();
+    }
+    
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
     // to i. update initial candidate lists
     void updateNeighborConflicts(int x, int y, int i, bool addConflict) {
@@ -297,8 +312,77 @@ struct Puzzle {
           }
         }
       }
+      
+      printf("updateNeighborConflicts starting block logic\n");
+      
+      int startBlockRow = startOfCurrentBlockRow(x);
+      int startBlockCol = startOfCurrentBlockCol(y);
+      int endBlockRow = startBlockRow + blockSize;
+      int endBlockCol = startBlockCol + blockSize;
+      
+      printf("slot to update is %i, %i\n", x, y);
+      printf("startBlockRow: %i, startBlockCol: %i, endBlockRow: %i, endBlockCol: %i\n", startBlockRow, startBlockCol, endBlockRow, endBlockCol);
+      
+      for (startBlockRow; startBlockRow < endBlockRow; startBlockRow++) {
+        for (startBlockCol; startBlockCol < endBlockCol; startBlockCol++) {
+          if (startBlockRow != x && startBlockCol != y) {
+            if (addConflict) {
+              incrConflict(startBlockRow, startBlockCol, i, true);
+            }
+            else {
+              decrConflict(startBlockRow, startBlockCol, i, true);        
+            }
+          }
+        }
+      }
+      
+      printf("updateNeighborConflicts end block logic\n");
     }
 
+    int startOfCurrentBlockRow(int rowIndex) {
+      return startOfCurrentBlockIndex(rowIndex);
+    }
+    
+    int startOfCurrentBlockCol(int colIndex) {
+      return startOfCurrentBlockIndex(colIndex);
+    }
+    
+    int startOfCurrentBlockIndex(int currentIndex) {
+      return (currentIndex / blockSize) * blockSize;
+    }
+    
+    bool checkNeighborCandidates(int x, int y) {
+      for (int i = 0; i < dim; i++) {
+        if (!preassigned[x][i]) {
+          if (!checkCandidates(x, i)) {
+            return false;
+          }
+        }
+        if (!preassigned[i][y]) {
+          if (!checkCandidates(i, y)) {
+            return false;
+          }
+        }
+      }
+      
+      int startBlockRow = startOfCurrentBlockRow(x);
+      int startBlockCol = startOfCurrentBlockCol(y);
+      int endBlockRow = startBlockRow + blockSize;
+      int endBlockCol = startBlockCol + blockSize;
+      
+      for (startBlockRow; startBlockRow < endBlockRow; startBlockRow++) {
+        for (startBlockCol; startBlockCol < endBlockCol; startBlockCol) {
+          if (startBlockRow != x && startBlockCol != y) {
+            if (!checkCandidates(startBlockRow, startBlockCol)) {
+              return false;
+            }
+          }
+        }
+      }
+      
+      return true;
+    }
+    
     // wrappers to add/subtract conflict counts to currentCandidates[x,y,i] or 
     // initCandidate[x,y,i] 
     void incrConflict(int x, int y, int i, bool initialList) {
@@ -311,6 +395,7 @@ struct Puzzle {
     // assigns next number in currentCandidateList to x,y, returns success/failure
     bool assign(int x, int y) {
       int toBeAssigned = nextCandidate(x, y);
+      printf("next candidate found to be %i\n", toBeAssigned);
       if (toBeAssigned == -1) {
         return false;
       }
@@ -331,7 +416,7 @@ struct Puzzle {
     }
 
     bool isSolved() {
-      if (currentX != dim - 1 || currentY != dim - 1) {
+      if (currentRow != dim - 1 || currentCol != dim - 1) {
         return false;
       }
       
@@ -339,7 +424,7 @@ struct Puzzle {
         for (int j = 0; j < dim; j++) {
           if (getCurrentAssigned(i, j) < 1) {
             printf("error: got to end but a number is unassigned\n");
-            exit(1);
+            return false;
           }
         }
       }
