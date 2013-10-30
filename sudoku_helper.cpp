@@ -66,7 +66,7 @@ struct CandidateList {
   
   void invalidateCandidate(int i)
   {
-    conflicts[i]=-1;
+    conflicts[i-1]=-1;
   }
 
 };
@@ -274,6 +274,7 @@ struct Puzzle {
       sudoku[x][y]=-1;
     }
 
+    
     //the conflicts count of x, y, number i's conflicts gets incremented by delta
     void changeConflicts(int x, int y, int i, int delta, bool initialList) {
       CandidateList* list;
@@ -285,6 +286,15 @@ struct Puzzle {
       }
       list->changeConflict(i, delta);
     }
+    
+    // wrappers to add/subtract conflict counts to currentCandidates[x,y,i] or 
+    // initCandidate[x,y,i] 
+    void incrConflict(int x, int y, int i, bool initialList) {
+      changeConflicts(x, y, i, 1, initialList);
+    }
+    void decrConflict(int x, int y, int i, bool initialList) {
+      changeConflicts(x, y, i, -1, initialList);
+    }// haotian
     
     bool checkCandidates(int x, int y) {
       return initCandidates[x][y]->checkCandidates();
@@ -371,7 +381,7 @@ struct Puzzle {
       int endBlockCol = startBlockCol + blockSize;
       
       for (startBlockRow; startBlockRow < endBlockRow; startBlockRow++) {
-        for (startBlockCol; startBlockCol < endBlockCol; startBlockCol) {
+        for (startBlockCol; startBlockCol < endBlockCol; startBlockCol++) {
           if (startBlockRow != x && startBlockCol != y) {
             if (!checkCandidates(startBlockRow, startBlockCol)) {
               return false;
@@ -382,15 +392,6 @@ struct Puzzle {
       
       return true;
     }
-    
-    // wrappers to add/subtract conflict counts to currentCandidates[x,y,i] or 
-    // initCandidate[x,y,i] 
-    void incrConflict(int x, int y, int i, bool initialList) {
-      changeConflicts(x, y, i, 1, initialList);
-    }
-    void decrConflict(int x, int y, int i, bool initialList) {
-      changeConflicts(x, y, i, -1, initialList);
-    }// haotian
 
     // assigns next number in currentCandidateList to x,y, returns success/failure
     bool assign(int x, int y) {

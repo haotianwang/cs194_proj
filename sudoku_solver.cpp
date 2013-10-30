@@ -76,7 +76,16 @@ int main(int argc, char *argv[]) {
     printf("prevslot: row is %i, col is %i\n", p.getCurrentRow(), p.getCurrentCol());
   }
   
-  //p.updateNeighborConflicts(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()), true);
+  /*
+  printf("TEST: check candidates\n");
+  p.checkCandidates(p.getCurrentRow(), p.getCurrentCol());
+  printf("TEST: assign\n");
+  p.assign(p.getCurrentRow(), p.getCurrentCol());
+  printf("TEST: update neighbors\n");
+  p.updateNeighborConflicts(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(0, 0), true);
+  printf("TEST: check neighbors\n");
+  p.checkNeighborCandidates(p.getCurrentRow(), p.getCurrentCol());
+  */
   
   while (!p.isSolved()) {
     printf("step 1\n");
@@ -118,6 +127,9 @@ int main(int argc, char *argv[]) {
     printf("no solution found\n");
   }
   
+  printf("deinitializing\n");
   p.deinitialize();
+  printf("deinitialized\n");
   delete2dIntArray(grid, atoi(argv[2]));
+  printf("deleted original array.\n");
 }
