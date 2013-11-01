@@ -104,7 +104,9 @@ struct Puzzle {
       while (preassigned[currentRow][currentCol]) {
         nextSlot();
       }
+      printf("slot initialized\n");
       copyCandidates(currentRow, currentCol);
+      printf("candidates copied\n");
       initialized = true;
       printf("initialized\n");
     }
@@ -131,8 +133,10 @@ struct Puzzle {
     
     void setupCandidateLists() {
       initCandidates = new CandidateList**[dim];
+      currentCandidates = new CandidateList**[dim];
       for (int i = 0; i < dim; i++) {
         initCandidates[i] = new CandidateList*[dim];
+	currentCandidates[i] = new CandidateList*[dim];
         for (int j = 0; j < dim; j++) {
           initCandidates[i][j] = new CandidateList(dim);
           initCandidates[i][j]->initialize();
@@ -231,17 +235,17 @@ struct Puzzle {
     {
     	if (currentCol==0)
     	{
-			if (currentRow!=0)
-			{
-				currentCol=dim-1;
-				currentRow-=1;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
+			  if (currentRow!=0)
+			  {
+				  currentCol=dim-1;
+				  currentRow-=1;
+			  }
+			  else
+			  {
+				  return false;
+			  }
+  		}
+  		else
     	{
     		currentCol-=1;
     	}
@@ -323,30 +327,33 @@ struct Puzzle {
         }
       }
       
-      printf("updateNeighborConflicts starting block logic\n");
+      //printf("updateNeighborConflicts starting block logic\n");
       
       int startBlockRow = startOfCurrentBlockRow(x);
       int startBlockCol = startOfCurrentBlockCol(y);
       int endBlockRow = startBlockRow + blockSize;
       int endBlockCol = startBlockCol + blockSize;
       
-      printf("slot to update is %i, %i\n", x, y);
-      printf("startBlockRow: %i, startBlockCol: %i, endBlockRow: %i, endBlockCol: %i\n", startBlockRow, startBlockCol, endBlockRow, endBlockCol);
+      //printf("slot to update is %i, %i\n", x, y);
+  //    printf("startBlockRow: %i, startBlockCol: %i, endBlockRow: %i, endBlockCol: %i\n", startBlockRow, startBlockCol, endBlockRow, endBlockCol);
       
-      for (startBlockRow; startBlockRow < endBlockRow; startBlockRow++) {
-        for (startBlockCol; startBlockCol < endBlockCol; startBlockCol++) {
-          if (startBlockRow != x && startBlockCol != y) {
+      for (int j = startBlockRow; j < endBlockRow; j++) {
+        for (int k = startBlockCol; k < endBlockCol; k++) {
+          printf("looping to slot %i, %i\n", j, k);
+          if (j != x && k != y && !preassigned[j][k]) {
+            printf("adding block conflict to %i, %i\n", j, k);
             if (addConflict) {
-              incrConflict(startBlockRow, startBlockCol, i, true);
+              incrConflict(j, k, i, true);
             }
             else {
-              decrConflict(startBlockRow, startBlockCol, i, true);        
+              decrConflict(j, k, i, true);        
             }
           }
         }
       }
-      
-      printf("updateNeighborConflicts end block logic\n");
+      decrConflict(x, y, i, true);      
+      decrConflict(x, y, i, true);
+    //  printf("updateNeighborConflicts end block logic\n");
     }
 
     int startOfCurrentBlockRow(int rowIndex) {
@@ -365,11 +372,13 @@ struct Puzzle {
       for (int i = 0; i < dim; i++) {
         if (!preassigned[x][i]) {
           if (!checkCandidates(x, i)) {
+            printf("checkNeighborCandidates returning false at: %i, %i\n", x, i);
             return false;
           }
         }
         if (!preassigned[i][y]) {
           if (!checkCandidates(i, y)) {
+            printf("checkNeighborCandidates returning false at: %i, %i\n", i, y);
             return false;
           }
         }
@@ -380,16 +389,17 @@ struct Puzzle {
       int endBlockRow = startBlockRow + blockSize;
       int endBlockCol = startBlockCol + blockSize;
       
-      for (startBlockRow; startBlockRow < endBlockRow; startBlockRow++) {
-        for (startBlockCol; startBlockCol < endBlockCol; startBlockCol++) {
-          if (startBlockRow != x && startBlockCol != y) {
-            if (!checkCandidates(startBlockRow, startBlockCol)) {
+      for (int j = startBlockRow; j < endBlockRow; j++) {
+        for (int k = startBlockCol; k < endBlockCol; k++) {
+          if (j != x && k != y) {
+            if (!checkCandidates(j, k)) {
+              printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
               return false;
             }
           }
         }
       }
-      
+//      printf("checkNeighbor
       return true;
     }
 
@@ -493,14 +503,14 @@ void delete2dIntArray(int** grid, int dim) {
   for (int i = 0; i < dim; i++) {
     delete grid[i];
   }
-  delete[] grid;
+  delete grid;
 }
 
 void delete2dBoolArray(bool** grid, int dim) {
   for (int i = 0; i < dim; i++) {
     delete grid[i];
   }
-  delete[] grid;
+  delete grid;
 }
 
 std::string convertInt(int number)

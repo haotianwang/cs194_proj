@@ -6,28 +6,29 @@
 #include "sudoku_helper.cpp"
 
 // step 1
-bool checkCurrentCandidates(Puzzle p) {
-  return p.checkCandidates(p.getCurrentRow(), p.getCurrentCol());
+bool checkCurrentCandidates(Puzzle* p) {
+  printf("step 1: current row %i, current col %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
+  return p->checkCandidates(p->getCurrentRow(), p->getCurrentCol());
 }
 
 
 // step 2. Returns whether reversing the slot succeeds.
-bool reverseSlot(Puzzle p) {
-  p.resetCandidates(p.getCurrentRow(), p.getCurrentCol());
-  if (!p.prevSlot()) {
+bool reverseSlot(Puzzle* p) {
+  p->resetCandidates(p->getCurrentRow(), p->getCurrentCol());
+  if (!p->prevSlot()) {
     return false;
   }
 }
 
 
 // step 3. Returns whether assignment succeeds
-bool assignAndValidate(Puzzle p) {
-  if (p.assign(p.getCurrentRow(), p.getCurrentCol())) {
+bool assignAndValidate(Puzzle* p) {
+  if (p->assign(p->getCurrentRow(), p->getCurrentCol())) {
     printf("step 3: assignment succeeded\n");
-    printf("calling updateNeighborConflicts with %i, %i, %i\n", p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()));
-    p.updateNeighborConflicts(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()), true);
-    printf("step 3: updateNeighborConflicts succeeded");
-    return p.checkNeighborCandidates(p.getCurrentRow(), p.getCurrentCol());
+    //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
+    p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
+//    printf("step 3: updateNeighborConflicts succeeded\n");
+    return p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
   }
   else {
     printf("error: reached slot with no candidates. shouldn't happen. exiting.\n");
@@ -37,17 +38,17 @@ bool assignAndValidate(Puzzle p) {
 
 
 // step 4
-void backtrack(Puzzle p) {
-  p.removeAndInvalidate(p.getCurrentRow(), p.getCurrentCol());
-  p.updateNeighborConflicts(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()), false);
+void backtrack(Puzzle* p) {
+  p->removeAndInvalidate(p->getCurrentRow(), p->getCurrentCol());
+  p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
   // loops back to front
 }
 
 
 // step 5
-void advanceSlot(Puzzle p) {
-  p.nextSlot();
-  p.copyCandidates(p.getCurrentRow(), p.getCurrentCol());
+void advanceSlot(Puzzle* p) {
+  p->nextSlot();
+  p->copyCandidates(p->getCurrentRow(), p->getCurrentCol());
 }
 
 
@@ -59,38 +60,38 @@ int main(int argc, char *argv[]) {
   }
 
   int** grid = fileTo2dArray(argv[1], atoi(argv[2]));
-  Puzzle p = Puzzle(grid, atoi(argv[2]));
-  p.initialize();
-
+  Puzzle* p = new Puzzle(grid, atoi(argv[2]));
+  p->initialize();
 
   /*  
-  p.printGridDim();
-  p.printGrid();
-  p.printPreassigned();
-  p.printInitCandidates();
-
+  p->printGridDim();
+  p->printGrid();
+  p->printPreassigned();
+  p->printInitCandidates();
   
-  printf("start: %i, %i\n", p.getCurrentRow(), p.getCurrentCol());
-  while (p.nextSlot()) {
-    printf("nextslot: row is %i, col is %i\n", p.getCurrentRow(), p.getCurrentCol());
+  printf("start: %i, %i\n", p->getCurrentRow(), p->getCurrentCol());
+  while (p->nextSlot()) {
+    printf("nextslot: row is %i, col is %i\n", p->getCurrentRow(), p->getCurrentCol());
   }
   
-  while (p.prevSlot()) {
-    printf("prevslot: row is %i, col is %i\n", p.getCurrentRow(), p.getCurrentCol());
+  while (p->prevSlot()) {
+    printf("prevslot: row is %i, col is %i\n", p->getCurrentRow(), p->getCurrentCol());
   }
   
 
   printf("TEST: check candidates\n");
-  p.checkCandidates(p.getCurrentRow(), p.getCurrentCol());
+  p->checkCandidates(p->getCurrentRow(), p->getCurrentCol());
   printf("TEST: assign\n");
-  p.assign(p.getCurrentRow(), p.getCurrentCol());
+  p->assign(p->getCurrentRow(), p->getCurrentCol());
   printf("TEST: update neighbors\n");
-  p.updateNeighborConflicts(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(0, 0), true);
+  p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(0, 0), true);
   printf("TEST: check neighbors\n");
-  p.checkNeighborCandidates(p.getCurrentRow(), p.getCurrentCol());
+  p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
   */
-  
-  while (!p.isSolved()) {
+
+  int counter=1000;  
+  while (!p->isSolved() && counter>0) {
+    counter--;
     printf("step 1\n");
     // step 1
     if (checkCurrentCandidates(p)) {
@@ -123,16 +124,19 @@ int main(int argc, char *argv[]) {
     }
   }
   
-  if (p.isSolved()) {
+  if (p->isSolved()) {
     printf("solution found!\n");
+    p->printGrid();
   }
   else {
     printf("no solution found\n");
   }
-  
+
+/*  
   printf("deinitializing\n");
-  p.deinitialize();
+  p->deinitialize();
   printf("deinitialized\n");
   delete2dIntArray(grid, atoi(argv[2]));
   printf("deleted original array.\n");
+*/
 }
