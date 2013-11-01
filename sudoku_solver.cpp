@@ -61,11 +61,14 @@ int main(int argc, char *argv[]) {
   int** grid = fileTo2dArray(argv[1], atoi(argv[2]));
   Puzzle p = Puzzle(grid, atoi(argv[2]));
   p.initialize();
-  
+
+
+  /*  
   p.printGridDim();
   p.printGrid();
   p.printPreassigned();
   p.printInitCandidates();
+
   
   printf("start: %i, %i\n", p.getCurrentRow(), p.getCurrentCol());
   while (p.nextSlot()) {
@@ -76,7 +79,7 @@ int main(int argc, char *argv[]) {
     printf("prevslot: row is %i, col is %i\n", p.getCurrentRow(), p.getCurrentCol());
   }
   
-  /*
+
   printf("TEST: check candidates\n");
   p.checkCandidates(p.getCurrentRow(), p.getCurrentCol());
   printf("TEST: assign\n");
