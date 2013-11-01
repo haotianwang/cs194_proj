@@ -1,0 +1,560 @@
+starting initialize
+preassigned set
+looping to slot 0, 0
+looping to slot 0, 1
+looping to slot 0, 2
+looping to slot 1, 0
+looping to slot 1, 1
+adding block conflict to 1, 1
+looping to slot 1, 2
+adding block conflict to 1, 2
+looping to slot 2, 0
+looping to slot 2, 1
+adding block conflict to 2, 1
+looping to slot 2, 2
+adding block conflict to 2, 2
+looping to slot 0, 0
+looping to slot 0, 1
+looping to slot 0, 2
+looping to slot 1, 0
+adding block conflict to 1, 0
+looping to slot 1, 1
+looping to slot 1, 2
+adding block conflict to 1, 2
+looping to slot 2, 0
+adding block conflict to 2, 0
+looping to slot 2, 1
+looping to slot 2, 2
+adding block conflict to 2, 2
+looping to slot 0, 3
+looping to slot 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+looping to slot 1, 4
+adding block conflict to 1, 4
+looping to slot 1, 5
+adding block conflict to 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+adding block conflict to 2, 5
+looping to slot 0, 3
+looping to slot 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+adding block conflict to 1, 3
+looping to slot 1, 4
+adding block conflict to 1, 4
+looping to slot 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+looping to slot 0, 6
+looping to slot 0, 7
+looping to slot 0, 8
+looping to slot 1, 6
+adding block conflict to 1, 6
+looping to slot 1, 7
+adding block conflict to 1, 7
+looping to slot 1, 8
+looping to slot 2, 6
+adding block conflict to 2, 6
+looping to slot 2, 7
+adding block conflict to 2, 7
+looping to slot 2, 8
+looping to slot 0, 3
+looping to slot 0, 4
+adding block conflict to 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+looping to slot 1, 4
+adding block conflict to 1, 4
+looping to slot 1, 5
+adding block conflict to 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+looping to slot 0, 3
+looping to slot 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+adding block conflict to 1, 3
+looping to slot 1, 4
+looping to slot 1, 5
+adding block conflict to 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+looping to slot 0, 6
+adding block conflict to 0, 6
+looping to slot 0, 7
+adding block conflict to 0, 7
+looping to slot 0, 8
+looping to slot 1, 6
+adding block conflict to 1, 6
+looping to slot 1, 7
+adding block conflict to 1, 7
+looping to slot 1, 8
+looping to slot 2, 6
+looping to slot 2, 7
+looping to slot 2, 8
+looping to slot 3, 0
+looping to slot 3, 1
+looping to slot 3, 2
+looping to slot 4, 0
+looping to slot 4, 1
+looping to slot 4, 2
+looping to slot 5, 0
+looping to slot 5, 1
+adding block conflict to 5, 1
+looping to slot 5, 2
+looping to slot 3, 0
+looping to slot 3, 1
+looping to slot 3, 2
+looping to slot 4, 0
+adding block conflict to 4, 0
+looping to slot 4, 1
+looping to slot 4, 2
+looping to slot 5, 0
+adding block conflict to 5, 0
+looping to slot 5, 1
+looping to slot 5, 2
+looping to slot 3, 3
+looping to slot 3, 4
+looping to slot 3, 5
+looping to slot 4, 3
+adding block conflict to 4, 3
+looping to slot 4, 4
+looping to slot 4, 5
+adding block conflict to 4, 5
+looping to slot 5, 3
+adding block conflict to 5, 3
+looping to slot 5, 4
+looping to slot 5, 5
+adding block conflict to 5, 5
+looping to slot 3, 6
+looping to slot 3, 7
+looping to slot 3, 8
+looping to slot 4, 6
+looping to slot 4, 7
+looping to slot 4, 8
+adding block conflict to 4, 8
+looping to slot 5, 6
+looping to slot 5, 7
+looping to slot 5, 8
+looping to slot 3, 0
+looping to slot 3, 1
+looping to slot 3, 2
+adding block conflict to 3, 2
+looping to slot 4, 0
+looping to slot 4, 1
+looping to slot 4, 2
+looping to slot 5, 0
+adding block conflict to 5, 0
+looping to slot 5, 1
+looping to slot 5, 2
+looping to slot 3, 0
+looping to slot 3, 1
+looping to slot 3, 2
+looping to slot 4, 0
+looping to slot 4, 1
+looping to slot 4, 2
+looping to slot 5, 0
+adding block conflict to 5, 0
+looping to slot 5, 1
+adding block conflict to 5, 1
+looping to slot 5, 2
+looping to slot 3, 6
+looping to slot 3, 7
+adding block conflict to 3, 7
+looping to slot 3, 8
+adding block conflict to 3, 8
+looping to slot 4, 6
+looping to slot 4, 7
+looping to slot 4, 8
+looping to slot 5, 6
+looping to slot 5, 7
+looping to slot 5, 8
+looping to slot 3, 6
+looping to slot 3, 7
+looping to slot 3, 8
+adding block conflict to 3, 8
+looping to slot 4, 6
+looping to slot 4, 7
+looping to slot 4, 8
+looping to slot 5, 6
+adding block conflict to 5, 6
+looping to slot 5, 7
+looping to slot 5, 8
+looping to slot 3, 0
+looping to slot 3, 1
+looping to slot 3, 2
+looping to slot 4, 0
+adding block conflict to 4, 0
+looping to slot 4, 1
+looping to slot 4, 2
+looping to slot 5, 0
+looping to slot 5, 1
+looping to slot 5, 2
+looping to slot 3, 3
+adding block conflict to 3, 3
+looping to slot 3, 4
+looping to slot 3, 5
+adding block conflict to 3, 5
+looping to slot 4, 3
+adding block conflict to 4, 3
+looping to slot 4, 4
+looping to slot 4, 5
+adding block conflict to 4, 5
+looping to slot 5, 3
+looping to slot 5, 4
+looping to slot 5, 5
+looping to slot 3, 6
+looping to slot 3, 7
+looping to slot 3, 8
+adding block conflict to 3, 8
+looping to slot 4, 6
+looping to slot 4, 7
+looping to slot 4, 8
+adding block conflict to 4, 8
+looping to slot 5, 6
+looping to slot 5, 7
+looping to slot 5, 8
+looping to slot 3, 6
+looping to slot 3, 7
+adding block conflict to 3, 7
+looping to slot 3, 8
+looping to slot 4, 6
+looping to slot 4, 7
+looping to slot 4, 8
+looping to slot 5, 6
+looping to slot 5, 7
+looping to slot 5, 8
+looping to slot 6, 0
+looping to slot 6, 1
+looping to slot 6, 2
+looping to slot 7, 0
+looping to slot 7, 1
+adding block conflict to 7, 1
+looping to slot 7, 2
+adding block conflict to 7, 2
+looping to slot 8, 0
+looping to slot 8, 1
+adding block conflict to 8, 1
+looping to slot 8, 2
+adding block conflict to 8, 2
+looping to slot 6, 3
+looping to slot 6, 4
+looping to slot 6, 5
+looping to slot 7, 3
+adding block conflict to 7, 3
+looping to slot 7, 4
+looping to slot 7, 5
+adding block conflict to 7, 5
+looping to slot 8, 3
+looping to slot 8, 4
+looping to slot 8, 5
+looping to slot 6, 3
+looping to slot 6, 4
+looping to slot 6, 5
+looping to slot 7, 3
+adding block conflict to 7, 3
+looping to slot 7, 4
+adding block conflict to 7, 4
+looping to slot 7, 5
+looping to slot 8, 3
+looping to slot 8, 4
+adding block conflict to 8, 4
+looping to slot 8, 5
+looping to slot 6, 0
+looping to slot 6, 1
+adding block conflict to 6, 1
+looping to slot 6, 2
+adding block conflict to 6, 2
+looping to slot 7, 0
+looping to slot 7, 1
+adding block conflict to 7, 1
+looping to slot 7, 2
+adding block conflict to 7, 2
+looping to slot 8, 0
+looping to slot 8, 1
+looping to slot 8, 2
+looping to slot 6, 3
+looping to slot 6, 4
+looping to slot 6, 5
+looping to slot 7, 3
+looping to slot 7, 4
+adding block conflict to 7, 4
+looping to slot 7, 5
+adding block conflict to 7, 5
+looping to slot 8, 3
+looping to slot 8, 4
+looping to slot 8, 5
+looping to slot 6, 3
+adding block conflict to 6, 3
+looping to slot 6, 4
+looping to slot 6, 5
+looping to slot 7, 3
+adding block conflict to 7, 3
+looping to slot 7, 4
+adding block conflict to 7, 4
+looping to slot 7, 5
+looping to slot 8, 3
+looping to slot 8, 4
+looping to slot 8, 5
+looping to slot 6, 6
+adding block conflict to 6, 6
+looping to slot 6, 7
+looping to slot 6, 8
+adding block conflict to 6, 8
+looping to slot 7, 6
+adding block conflict to 7, 6
+looping to slot 7, 7
+looping to slot 7, 8
+adding block conflict to 7, 8
+looping to slot 8, 6
+looping to slot 8, 7
+looping to slot 8, 8
+looping to slot 6, 6
+adding block conflict to 6, 6
+looping to slot 6, 7
+adding block conflict to 6, 7
+looping to slot 6, 8
+looping to slot 7, 6
+adding block conflict to 7, 6
+looping to slot 7, 7
+adding block conflict to 7, 7
+looping to slot 7, 8
+looping to slot 8, 6
+looping to slot 8, 7
+looping to slot 8, 8
+candidate lists set
+slot initialized
+candidates copied
+initialized
+step 1
+step 1: current row 0, current col 2, -1
+step 3
+next candidate found to be 1
+step 3: assignment succeeded
+looping to slot 0, 0
+looping to slot 0, 1
+looping to slot 0, 2
+looping to slot 1, 0
+adding block conflict to 1, 0
+looping to slot 1, 1
+adding block conflict to 1, 1
+looping to slot 1, 2
+looping to slot 2, 0
+adding block conflict to 2, 0
+looping to slot 2, 1
+adding block conflict to 2, 1
+looping to slot 2, 2
+step 5
+step 1
+step 1: current row 0, current col 4, -1
+step 3
+next candidate found to be 2
+step 3: assignment succeeded
+looping to slot 0, 3
+looping to slot 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+adding block conflict to 1, 3
+looping to slot 1, 4
+looping to slot 1, 5
+adding block conflict to 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+adding block conflict to 2, 5
+step 5
+step 1
+step 1: current row 0, current col 6, -1
+step 3
+next candidate found to be 4
+step 3: assignment succeeded
+looping to slot 0, 6
+looping to slot 0, 7
+looping to slot 0, 8
+looping to slot 1, 6
+looping to slot 1, 7
+adding block conflict to 1, 7
+looping to slot 1, 8
+adding block conflict to 1, 8
+looping to slot 2, 6
+looping to slot 2, 7
+adding block conflict to 2, 7
+looping to slot 2, 8
+step 5
+step 1
+step 1: current row 0, current col 7, -1
+step 3
+next candidate found to be 8
+step 3: assignment succeeded
+looping to slot 0, 6
+looping to slot 0, 7
+looping to slot 0, 8
+looping to slot 1, 6
+adding block conflict to 1, 6
+looping to slot 1, 7
+looping to slot 1, 8
+adding block conflict to 1, 8
+looping to slot 2, 6
+adding block conflict to 2, 6
+looping to slot 2, 7
+looping to slot 2, 8
+step 5
+step 1
+step 1: current row 1, current col 0, -1
+step 3
+next candidate found to be 2
+step 3: assignment succeeded
+looping to slot 0, 0
+looping to slot 0, 1
+looping to slot 0, 2
+adding block conflict to 0, 2
+looping to slot 1, 0
+looping to slot 1, 1
+looping to slot 1, 2
+looping to slot 2, 0
+looping to slot 2, 1
+adding block conflict to 2, 1
+looping to slot 2, 2
+adding block conflict to 2, 2
+step 5
+step 1
+step 1: current row 1, current col 1, -1
+step 3
+next candidate found to be 3
+step 3: assignment succeeded
+looping to slot 0, 0
+looping to slot 0, 1
+looping to slot 0, 2
+adding block conflict to 0, 2
+looping to slot 1, 0
+looping to slot 1, 1
+looping to slot 1, 2
+looping to slot 2, 0
+adding block conflict to 2, 0
+looping to slot 2, 1
+looping to slot 2, 2
+adding block conflict to 2, 2
+step 5
+step 1
+step 1: current row 1, current col 2, -1
+step 3
+next candidate found to be 4
+step 3: assignment succeeded
+looping to slot 0, 0
+looping to slot 0, 1
+looping to slot 0, 2
+looping to slot 1, 0
+looping to slot 1, 1
+looping to slot 1, 2
+looping to slot 2, 0
+adding block conflict to 2, 0
+looping to slot 2, 1
+adding block conflict to 2, 1
+looping to slot 2, 2
+step 5
+step 1
+step 1: current row 1, current col 3, -1
+step 3
+next candidate found to be 1
+step 3: assignment succeeded
+looping to slot 0, 3
+looping to slot 0, 4
+adding block conflict to 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+looping to slot 1, 4
+looping to slot 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+adding block conflict to 2, 5
+step 5
+step 1
+step 1: current row 1, current col 4, -1
+step 3
+next candidate found to be 6
+step 3: assignment succeeded
+looping to slot 0, 3
+looping to slot 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+looping to slot 1, 4
+looping to slot 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+adding block conflict to 2, 5
+step 5
+step 1
+step 1: current row 1, current col 5, -1
+step 3
+next candidate found to be 7
+step 3: assignment succeeded
+looping to slot 0, 3
+looping to slot 0, 4
+adding block conflict to 0, 4
+looping to slot 0, 5
+looping to slot 1, 3
+looping to slot 1, 4
+looping to slot 1, 5
+looping to slot 2, 3
+looping to slot 2, 4
+looping to slot 2, 5
+step 5
+step 1
+step 1: current row 1, current col 6, -1
+step 3
+next candidate found to be 5
+step 3: assignment succeeded
+looping to slot 0, 6
+looping to slot 0, 7
+adding block conflict to 0, 7
+looping to slot 0, 8
+looping to slot 1, 6
+looping to slot 1, 7
+looping to slot 1, 8
+looping to slot 2, 6
+looping to slot 2, 7
+adding block conflict to 2, 7
+looping to slot 2, 8
+step 5
+step 1
+step 1: current row 1, current col 7, -1
+step 3
+next candidate found to be 9
+step 3: assignment succeeded
+looping to slot 0, 6
+adding block conflict to 0, 6
+looping to slot 0, 7
+looping to slot 0, 8
+looping to slot 1, 6
+looping to slot 1, 7
+looping to slot 1, 8
+looping to slot 2, 6
+adding block conflict to 2, 6
+looping to slot 2, 7
+looping to slot 2, 8
+checkNeighborCandidates returning false at: 1, 8
+[1,1,2,2,2,2,2,1,1] step 4
+looping to slot 0, 6
+adding block conflict to 0, 6
+looping to slot 0, 7
+looping to slot 0, 8
+looping to slot 1, 6
+looping to slot 1, 7
+looping to slot 1, 8
+looping to slot 2, 6
+adding block conflict to 2, 6
+looping to slot 2, 7
+looping to slot 2, 8
+step 1
+step 1: current row 1, current col 7, -1
+step 2
+step 2 failed
+no solution found

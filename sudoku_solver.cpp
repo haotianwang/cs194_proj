@@ -39,8 +39,8 @@ bool assignAndValidate(Puzzle* p) {
 
 // step 4
 void backtrack(Puzzle* p) {
-  p->removeAndInvalidate(p->getCurrentRow(), p->getCurrentCol());
   p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
+  p->removeAndInvalidate(p->getCurrentRow(), p->getCurrentCol());
   // loops back to front
 }
 
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
   p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
   */
 
-  int counter=1000;  
+  int counter=10000;  
   while (!p->isSolved() && counter>0) {
     counter--;
     printf("step 1\n");

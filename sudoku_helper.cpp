@@ -274,7 +274,7 @@ struct Puzzle {
     
     void removeAndInvalidate(int x, int y) //Brennan
     {
-      currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]-1);
+      currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]);
       sudoku[x][y]=-1;
     }
 
@@ -373,12 +373,14 @@ struct Puzzle {
         if (!preassigned[x][i]) {
           if (!checkCandidates(x, i)) {
             printf("checkNeighborCandidates returning false at: %i, %i\n", x, i);
+              std::cout << initCandidates[x][i]->toString() << " ";
             return false;
           }
         }
         if (!preassigned[i][y]) {
           if (!checkCandidates(i, y)) {
             printf("checkNeighborCandidates returning false at: %i, %i\n", i, y);
+              std::cout << initCandidates[i][y]->toString() << " ";
             return false;
           }
         }
@@ -394,6 +396,7 @@ struct Puzzle {
           if (j != x && k != y) {
             if (!checkCandidates(j, k)) {
               printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
+              std::cout << initCandidates[j][k]->toString() << " ";
               return false;
             }
           }
@@ -434,7 +437,7 @@ struct Puzzle {
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
           if (getCurrentAssigned(i, j) < 1) {
-            printf("error: got to end but a number is unassigned\n");
+    //        printf("error: got to end but a number is unassigned\n");
             return false;
           }
         }
