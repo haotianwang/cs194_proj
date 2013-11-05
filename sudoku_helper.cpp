@@ -55,6 +55,7 @@ struct CandidateList {
       conflicts[num] = conflicts[num] + change;
     }
 
+   //returns if there is still a valid candidate for this slot
     bool checkCandidates() //Brennan
 	{
 		for (int i = 0; i<dim; i++)
@@ -136,10 +137,12 @@ struct Puzzle {
       currentCandidates = new CandidateList**[dim];
       for (int i = 0; i < dim; i++) {
         initCandidates[i] = new CandidateList*[dim];
-	currentCandidates[i] = new CandidateList*[dim];
+	      currentCandidates[i] = new CandidateList*[dim];
         for (int j = 0; j < dim; j++) {
           initCandidates[i][j] = new CandidateList(dim);
           initCandidates[i][j]->initialize();
+          currentCandidates[i][j] = new CandidateList(dim);
+          currentCandidates[i][j]->initialize();
         }
       }
       
@@ -188,7 +191,19 @@ struct Puzzle {
     void printInitCandidates() {
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
-          std::cout << initCandidates[i][j]->toString() << " ";
+          if (preassigned[i][j]) {
+            std::cout << "[";
+            for (int k = 0; k < dim; k++) {
+              std::cout << "-9";
+              if (k + 1 < dim) {
+                std::cout << ",";
+              }
+            }
+            std::cout << "] ";
+          }
+          else {
+            std::cout << initCandidates[i][j]->toString() << " ";
+          }
         }
         std::cout << "\n";
       }
@@ -196,11 +211,14 @@ struct Puzzle {
     
     void copyCandidates(int x, int y) //Brennan
     {
-    	currentCandidates[x][y]=initCandidates[x][y];
+      for (int i = 0; i < dim; i++) {
+        currentCandidates[x][y]->conflicts[i] = initCandidates[x][y]->conflicts[i];
+      }
     }
+    
     void resetCandidates(int x, int y) //Brennan
     {
-    	initCandidates[x][y]=currentCandidates[x][y];
+    	//initCandidates[x][y]=currentCandidates[x][y];
     }
     
     bool nextSlot() //Brennan
@@ -351,8 +369,17 @@ struct Puzzle {
           }
         }
       }
-      decrConflict(x, y, i, true);      
-      decrConflict(x, y, i, true);
+
+      if (addConflict)
+      {
+        decrConflict(x, y, i, true);      
+        decrConflict(x, y, i, true);
+      }
+      else
+      {
+        incrConflict(x,y,i,true);
+        incrConflict(x,y,i,true);
+      }
     //  printf("updateNeighborConflicts end block logic\n");
     }
 
