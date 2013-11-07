@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <time.h>
 
 #include "sudoku_helper.cpp"
 
@@ -59,6 +60,7 @@ void advanceSlot(Puzzle* p) {
 
 
 int main(int argc, char *argv[]) {
+  time_t start = time(0);
   
   if (argc != 3) {
     printf("wrong number of inputs\n");
@@ -144,4 +146,8 @@ int main(int argc, char *argv[]) {
   //printf("deinitialized\n");
   delete2dIntArray(grid, atoi(argv[2]));
   //printf("deleted original array.\n");
+
+  double seconds_since_start = difftime( time(0), start);
+
+  printf("%f seconds to run program\n", seconds_since_start);
 }
