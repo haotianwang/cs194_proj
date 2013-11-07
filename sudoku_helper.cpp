@@ -95,21 +95,21 @@ struct Puzzle {
     }
     
     void initialize() {
-      printf("starting initialize\n");
+      //printf("starting initialize\n");
       setupPreassigned();
-      printf("preassigned set\n");
+      //printf("preassigned set\n");
       setupCandidateLists();
-      printf("candidate lists set\n");
+      //printf("candidate lists set\n");
       currentCol = 0;
       currentRow = 0;
       while (preassigned[currentRow][currentCol]) {
         nextSlot();
       }
-      printf("slot initialized\n");
+      //printf("slot initialized\n");
       copyCandidates(currentRow, currentCol);
-      printf("candidates copied\n");
+      //printf("candidates copied\n");
       initialized = true;
-      printf("initialized\n");
+      //printf("initialized\n");
     }
     
     void deinitialize() {
@@ -318,8 +318,16 @@ struct Puzzle {
       changeConflicts(x, y, i, -1, initialList);
     }// haotian
     
-    bool checkCandidates(int x, int y) {
-      return initCandidates[x][y]->checkCandidates();
+    bool checkCandidates(int x, int y, bool initialList) {
+      CandidateList*** myCandidates;
+      if (initialList) {
+        myCandidates = initCandidates;
+      }
+      else {
+        myCandidates = currentCandidates;
+      }
+
+      return myCandidates[x][y]->checkCandidates();
     }
     
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
@@ -357,9 +365,9 @@ struct Puzzle {
       
       for (int j = startBlockRow; j < endBlockRow; j++) {
         for (int k = startBlockCol; k < endBlockCol; k++) {
-          printf("looping to slot %i, %i\n", j, k);
+          //printf("looping to slot %i, %i\n", j, k);
           if (j != x && k != y && !preassigned[j][k]) {
-            printf("adding block conflict to %i, %i\n", j, k);
+            //printf("adding block conflict to %i, %i\n", j, k);
             if (addConflict) {
               incrConflict(j, k, i, true);
             }
@@ -380,7 +388,7 @@ struct Puzzle {
         incrConflict(x,y,i,true);
         incrConflict(x,y,i,true);
       }
-    //  printf("updateNeighborConflicts end block logic\n");
+      //printf("updateNeighborConflicts end block logic\n");
     }
 
     int startOfCurrentBlockRow(int rowIndex) {
@@ -398,16 +406,16 @@ struct Puzzle {
     bool checkNeighborCandidates(int x, int y) {
       for (int i = 0; i < dim; i++) {
         if (!preassigned[x][i]) {
-          if (!checkCandidates(x, i)) {
-            printf("checkNeighborCandidates returning false at: %i, %i\n", x, i);
-              std::cout << initCandidates[x][i]->toString() << " ";
+          if (!checkCandidates(x, i, true)) {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i);
+            //std::cout << initCandidates[x][i]->toString() << " ";
             return false;
           }
         }
         if (!preassigned[i][y]) {
-          if (!checkCandidates(i, y)) {
-            printf("checkNeighborCandidates returning false at: %i, %i\n", i, y);
-              std::cout << initCandidates[i][y]->toString() << " ";
+          if (!checkCandidates(i, y, true)) {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", i, y);
+            //std::cout << initCandidates[i][y]->toString() << " ";
             return false;
           }
         }
@@ -421,9 +429,9 @@ struct Puzzle {
       for (int j = startBlockRow; j < endBlockRow; j++) {
         for (int k = startBlockCol; k < endBlockCol; k++) {
           if (j != x && k != y) {
-            if (!checkCandidates(j, k)) {
-              printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
-              std::cout << initCandidates[j][k]->toString() << " ";
+            if (!checkCandidates(j, k, true)) {
+              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
+              //std::cout << initCandidates[j][k]->toString() << " ";
               return false;
             }
           }
@@ -436,7 +444,7 @@ struct Puzzle {
     // assigns next number in currentCandidateList to x,y, returns success/failure
     bool assign(int x, int y) {
       int toBeAssigned = nextCandidate(x, y);
-      printf("next candidate found to be %i\n", toBeAssigned);
+      //printf("next candidate found to be %i\n", toBeAssigned);
       if (toBeAssigned == -1) {
         return false;
       }

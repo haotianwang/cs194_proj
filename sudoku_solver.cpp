@@ -7,15 +7,8 @@
 
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {
-  printf("step 1: current row %i, current col %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
-  
-  
-  if (p->getCurrentRow() == 2 && p->getCurrentCol() == 1) {
-    return false;
-  }
-  
-  
-  return p->checkCandidates(p->getCurrentRow(), p->getCurrentCol());
+  //printf("step 1: current row %i, current col %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
+  return p->checkCandidates(p->getCurrentRow(), p->getCurrentCol(), false);
 }
 
 
@@ -29,13 +22,13 @@ bool reverseSlot(Puzzle* p) {
 // step 3. Returns whether assignment succeeds
 bool assignAndValidate(Puzzle* p) {
   if (p->assign(p->getCurrentRow(), p->getCurrentCol())) {
-    printf("step 3: assignment succeeded\n");
+    //printf("step 3: assignment succeeded\n");
     //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
-    printf("pre-assign candidate list: \n"); 
-    p->printInitCandidates();
+    //printf("pre-assign candidate list: \n"); 
+    //p->printInitCandidates();
     p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
-    printf("post-assign candidate list: \n"); 
-    p->printInitCandidates();    
+    //printf("post-assign candidate list: \n"); 
+    //p->printInitCandidates();    
 //    printf("step 3: updateNeighborConflicts succeeded\n");
     return p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
   }
@@ -48,11 +41,11 @@ bool assignAndValidate(Puzzle* p) {
 
 // step 4
 void backtrack(Puzzle* p) {
-  printf("pre-update candidate list: \n"); 
-  p->printInitCandidates();
+  //printf("pre-update candidate list: \n"); 
+  //p->printInitCandidates();
   p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
-  printf("post-update candidate list: \n"); 
-  p->printInitCandidates();
+  //printf("post-update candidate list: \n"); 
+  //p->printInitCandidates();
   p->removeAndInvalidate(p->getCurrentRow(), p->getCurrentCol());
   // loops back to front
 }
@@ -102,36 +95,37 @@ int main(int argc, char *argv[]) {
   p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
   */
 
-  int counter=10000;  
-  while (!p->isSolved() && counter>0) {
-    counter--;
-    printf("step 1\n");
+  //int counter=10000;  
+  while (!p->isSolved()) {
+  //while (!p->isSolved() && counter>0) {
+    //counter--;
+    //printf("step 1\n");
     // step 1
     if (checkCurrentCandidates(p)) {
-      printf("step 3\n");
+      //printf("step 3\n");
       // step 3
       bool succeeded = assignAndValidate(p);
       if (succeeded) {
-        printf("step 5\n");
+        //printf("step 5\n");
         // step 5
         advanceSlot(p);
       }
       else {
-        printf("step 4\n");
+        //printf("step 4\n");
         // step 4
         backtrack(p);
       }
     }
     else {
-      printf("step 2\n");
+      //printf("step 2\n");
       // step 2
       if (reverseSlot(p)) {
-        printf("step 4\n");
+        //printf("step 4\n");
         // step 4
         backtrack(p);
       }
       else {
-        printf("step 2 failed\n");
+        //printf("step 2 failed\n");
         break;
       }
     }
@@ -144,12 +138,10 @@ int main(int argc, char *argv[]) {
   else {
     printf("no solution found\n");
   }
-
-/*  
-  printf("deinitializing\n");
+  
+  //printf("deinitializing\n");
   p->deinitialize();
-  printf("deinitialized\n");
+  //printf("deinitialized\n");
   delete2dIntArray(grid, atoi(argv[2]));
-  printf("deleted original array.\n");
-*/
+  //printf("deleted original array.\n");
 }
