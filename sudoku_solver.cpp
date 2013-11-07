@@ -147,6 +147,7 @@ int main(int argc, char *argv[]) {
     printf("no solution found\n");
   }
   
+  
   //printf("deinitializing\n");
   p->deinitialize();
   //printf("deinitialized\n");
