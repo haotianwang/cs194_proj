@@ -7,8 +7,11 @@
 
 #include "sudoku_helper.cpp"
 
+static int testLevel = 0;
+
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {
+  if (testLevel > 0) printf("step 1: on (%i, %i)\n", p->getCurrentRow(), p->getCurrentCol());
   //printf("step 1: current row %i, current col %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
   return p->checkCandidates(p->getCurrentRow(), p->getCurrentCol(), false);
 }
@@ -16,6 +19,7 @@ bool checkCurrentCandidates(Puzzle* p) {
 
 // step 2. Returns whether reversing the slot succeeds.
 bool reverseSlot(Puzzle* p) {
+  if (testLevel > 0) printf("step 2");
   p->resetCandidates(p->getCurrentRow(), p->getCurrentCol());
   return p->prevSlot();
 }
@@ -24,6 +28,8 @@ bool reverseSlot(Puzzle* p) {
 // step 3. Returns whether assignment succeeds
 bool assignAndValidate(Puzzle* p) {
   if (p->assign(p->getCurrentRow(), p->getCurrentCol())) {
+    if (testLevel > 0) 
+      printf("step 3: on (%i, %i), assigned %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
     //printf("step 3: assignment succeeded\n");
     //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
     //printf("pre-assign candidate list: \n"); 
@@ -43,6 +49,8 @@ bool assignAndValidate(Puzzle* p) {
 
 // step 4
 void backtrack(Puzzle* p) {
+  if (testLevel > 0) 
+    printf("step 4: on (%i, %i), unassigning %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
   //printf("pre-update candidate list: \n"); 
   //p->printInitCandidates();
   p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
@@ -55,6 +63,7 @@ void backtrack(Puzzle* p) {
 
 // step 5
 void advanceSlot(Puzzle* p) {
+  if (testLevel > 0) printf("step 5: next slot\n");
   p->nextSlot();
   p->copyCandidates(p->getCurrentRow(), p->getCurrentCol());
 }
