@@ -5,7 +5,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#include "sudoku_helper.cpp"
+#include "sudoku_helper_serial.cpp"
 
 static int testLevel = 1;
 
