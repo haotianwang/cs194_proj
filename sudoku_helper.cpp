@@ -18,65 +18,137 @@ int* file2dArray(char* fileName, int dim);
 std::string convertInt(int number);
 
 struct CandidateList {
-	int* conflicts;
+	unsigned int conflicts;
   int dim;
+  
   
   public:
     CandidateList(int inputDim) {
       dim = inputDim;
     }
     
-    void initialize() {
-      conflicts = new int[dim];
-      for (int i = 0; i < dim; i++) {
-        conflicts[i] = 0;
+    void initialize()
+    {
+     /*  
+      //This is a more robust version, but is linear-time instead of constant
+      conflicts=0;
+      for (int i=0; i<dim; i++)
+      {
+        conflicts|=1<<i;
+      }
+       */
+       
+      
+      //This is a constant-time operation, but only handles the 4 specific cases     
+      //4x4 case
+      if(dim==4)
+      {
+        //00000000 00000000 00000000 00001111
+        conflicts=15;
+      }
+      //9x9 case
+      else if (dim==9)
+      {
+        //00000000 00000000 00000001 11111111
+        conflicts=511;
+      }
+      //16x16 case
+      else if (dim==16)
+      {
+        //00000000 00000000 11111111 11111111
+        conflicts=65535;
+      }
+      //25x25 case
+      else if (dim==25)
+      {
+        //00000001 11111111 11111111 11111111
+        conflicts=33554431;
+      }
+      else
+      {
+        //We dun goofed and the sudoku is invalid size, no valid options
+        conflicts=0;
       }
     }
     
     void deinitialize() {
-      delete conflicts;
+      conflicts=0;
     }
     
     std::string toString() {
       std::string result = "[";
       for (int i = 0; i < dim; i++) {
-        result.append(convertInt(conflicts[i]));
-        if (i+1 < dim) {
-          result.append(",");
+        if(checkCandidates(i))
+        {
+          result.append(convertInt(i));
+          if (i+1 < dim) {
+            result.append(",");
+          }
         }
       }
       result.append("]");
       return result;
     }
     
-    void changeConflict(int num, int change) {
+    void changeConflict(int num, int placeholderUntilWeCompletelySwitchOver) {
       // correct for starting at 0
-      num = num - 1;
-      conflicts[num] = conflicts[num] + change;
+      // flips candidate bit from valid to invalid, and vice-versa
+      // probably never gonna need this, BUT HEY
+      conflicts^=1<<(num-1);
     }
 
-   //returns if there is still a valid candidate for this slot
-    bool checkCandidates() //Brennan
+   //returns whether given value is valid, or if there is some valid value
+    bool checkCandidates(int given=33) //Brennan
 	{
-		for (int i = 0; i<dim; i++)
-		{
-			if (conflicts[i]==0) return true;
-		}
-		return false;
+		if (given==33)
+    {
+      return conflicts!=0;
+    }
+    else
+    {
+      return conflicts&(1<<given)==1;
+    }
 	}
   
   void invalidateCandidate(int i)
   {
-    conflicts[i-1]=-1;
+    conflicts&=~(1<<i);
   }
 
   // For Brennan
   int nextCandidate() {
-    return -1;
+    //should return the next candidate, or 0 if there are none
+    if (conflicts==0)
+    {
+      return 0;
+    }
+    else
+    {
+      return 1+__builtin_ffs(conflicts);
+    }
   }
   
+  // protected unsigned int getConflictList()
+  // {
+    // return conflicts;
+  // }
+  
   // For Brennan
-  void copyFrom(CandidateList* source) {
+  void copyFrom(CandidateList* source) 
+  {
+    // conflicts=source.getConflictList();
+    conflicts=source->conflicts;
+    
+/*    
+    conflicts=0;
+    for (int i=0; i<32; i++)
+    {
+      if (source->checkCandidates(i))
+      {
+        conflicts|=1<<i;
+      }
+    }
+ */
   }
 };
 
