@@ -70,6 +70,14 @@ struct CandidateList {
     conflicts[i-1]=-1;
   }
 
+  // For Brennan
+  int nextCandidate() {
+    return -1;
+  }
+  
+  // For Brennan
+  void copyFrom(CandidateList* source) {
+  }
 };
 
 struct Puzzle {
@@ -150,7 +158,7 @@ struct Puzzle {
         for (int j = 0; j < dim; j++) {
           int element = sudoku[i][j];
           if (element > 0) {
-            updateNeighborConflicts(i, j, element, true); 
+            invalidateNeighbors(i, j, element); 
           }
         }
       }
@@ -211,11 +219,10 @@ struct Puzzle {
     
     void copyCandidates(int x, int y) //Brennan
     {
-      for (int i = 0; i < dim; i++) {
-        currentCandidates[x][y]->conflicts[i] = initCandidates[x][y]->conflicts[i];
-      }
+      currentCandidates[x][y]->copyFrom(initCandidates[x][y]);
     }
     
+    // deprecated
     void resetCandidates(int x, int y) //Brennan
     {
     	//initCandidates[x][y]=currentCandidates[x][y];
@@ -298,6 +305,7 @@ struct Puzzle {
 
     
     //the conflicts count of x, y, number i's conflicts gets incremented by delta
+    // deprecated
     void changeConflicts(int x, int y, int i, int delta, bool initialList) {
       CandidateList* list;
       if (initialList) {
@@ -311,9 +319,11 @@ struct Puzzle {
     
     // wrappers to add/subtract conflict counts to currentCandidates[x,y,i] or 
     // initCandidate[x,y,i] 
+    // deprecated
     void incrConflict(int x, int y, int i, bool initialList) {
       changeConflicts(x, y, i, 1, initialList);
     }
+    // deprecated
     void decrConflict(int x, int y, int i, bool initialList) {
       changeConflicts(x, y, i, -1, initialList);
     }// haotian
@@ -330,8 +340,43 @@ struct Puzzle {
       return myCandidates[x][y]->checkCandidates();
     }
     
+    void invalidateCandidate(int x, int y, int num, bool initList) {
+      CandidateList* list = initCandidates[x][y];
+      if (!initList) {
+        list = currentCandidates[x][y];
+      }
+      
+      list->invalidateCandidate(num);
+    }
+    
+    void invalidateNeighbors(int x, int y, int num) {
+      for (int index = 0; index < dim; index++) {
+        if (index != y) {
+          invalidateCandidate(x, index, num, true);
+        }
+        
+        if (index != x) {
+          invalidateCandidate(index, y, num, true);
+        }
+      }
+      
+      int startBlockRow = startOfCurrentBlockRow(x);
+      int startBlockCol = startOfCurrentBlockCol(y);
+      int endBlockRow = startBlockRow + blockSize;
+      int endBlockCol = startBlockCol + blockSize;
+
+      for (int j = startBlockRow; j < endBlockRow; j++) {
+        for (int k = startBlockCol; k < endBlockCol; k++) {
+          if (j != x && k != y && !preassigned[j][k]) {
+            invalidateCandidate(j, k, num, true);
+          }
+        }
+      }  
+    }
+    
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
     // to i. update initial candidate lists
+    // deprecated
     void updateNeighborConflicts(int x, int y, int i, bool addConflict) {
       for (int index = 0; index < dim; index++) {
         if (!preassigned[x][index]) {
@@ -403,6 +448,37 @@ struct Puzzle {
       return (currentIndex / blockSize) * blockSize;
     }
     
+    bool checkNeighborAssignments(int x, int y) {
+      int current = sudoku[x][y];
+    
+      for (int i = 0; i < dim; i++) {
+        if (sudoku[x][i] == current && i != y) {
+          return false;
+        }
+        if (sudoku[i][y] == current && i != x) {
+          return false;
+        }
+      }
+      
+      int startBlockRow = startOfCurrentBlockRow(x);
+      int startBlockCol = startOfCurrentBlockCol(y);
+      int endBlockRow = startBlockRow + blockSize;
+      int endBlockCol = startBlockCol + blockSize;
+      
+      for (int j = startBlockRow; j < endBlockRow; j++) {
+        for (int k = startBlockCol; k < endBlockCol; k++) {
+          if (j != x && k != y) {
+            if (sudoku[j][k] == current) {
+              return false;
+            }
+          }
+        }
+      }
+      
+      return true;
+    }
+    
+    // deprecated
     bool checkNeighborCandidates(int x, int y) {
       for (int i = 0; i < dim; i++) {
         if (!preassigned[x][i]) {
@@ -456,12 +532,7 @@ struct Puzzle {
     
     int nextCandidate(int x, int y) {
       CandidateList* list = currentCandidates[x][y];
-      for (int i = 0; i < list->dim; i++) {
-        if (list->conflicts[i] == 0) {
-          return i+1;
-        }
-      }
-      return -1;
+      return list->nextCandidate();
     }
 
     bool isSolved() {

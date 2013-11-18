@@ -34,7 +34,8 @@ bool assignAndValidate(Puzzle* p) {
     //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
     //printf("pre-assign candidate list: \n"); 
     //p->printInitCandidates();
-    p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
+    // deprecated
+    //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
     //printf("post-assign candidate list: \n"); 
     //p->printInitCandidates();    
 //    printf("step 3: updateNeighborConflicts succeeded\n");
@@ -53,7 +54,8 @@ void backtrack(Puzzle* p) {
     printf("step 4: on (%i, %i), unassigning %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
   //printf("pre-update candidate list: \n"); 
   //p->printInitCandidates();
-  p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
+  //deprecated
+  //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
   //printf("post-update candidate list: \n"); 
   //p->printInitCandidates();
   p->removeAndInvalidate(p->getCurrentRow(), p->getCurrentCol());
