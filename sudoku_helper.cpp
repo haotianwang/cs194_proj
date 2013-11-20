@@ -78,11 +78,14 @@ struct CandidateList {
     
     std::string toString() {
       std::string result = "[";
-      for (int i = 1; i <= dim; i++) {
+      for (int i = 1; i <= dim; i++) 
+      {
         if(checkCandidate(i))
         {
           result.append(convertInt(i));
-          if (i+1 < dim) {
+
+          if (i+1<=dim) 
+          {
             result.append(",");
           }
         }
@@ -107,14 +110,15 @@ struct CandidateList {
   //returns whether the given value is still valid
     bool checkCandidate(int given) //Brennan
   {
-    if (given>25 || given<1)
+    if (given>dim || given<1)
     {
       printf("Invalid index given to checkCandidate!");
       return false;
     }
     else
     {
-      return conflicts&(1<<(given-1))==1;
+      std::bitset<32> x(conflicts);
+      return x.test(given-1);
     }
   }
   
