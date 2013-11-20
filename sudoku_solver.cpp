@@ -39,7 +39,7 @@ bool assignAndValidate(Puzzle* p) {
     //printf("post-assign candidate list: \n"); 
     //p->printInitCandidates();    
 //    printf("step 3: updateNeighborConflicts succeeded\n");
-    return p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
+    return p->checkNeighborAssignments(p->getCurrentRow(), p->getCurrentCol());
   }
   else {
     printf("error: reached slot with no candidates. shouldn't happen. exiting.\n");

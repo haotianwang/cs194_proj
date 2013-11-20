@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <math.h>
+#include <bitset>
 
 void delete2dIntArray(int** array, int dim);
 void delete2dBoolArray(bool** array, int dim);
@@ -77,7 +78,7 @@ struct CandidateList {
     
     std::string toString() {
       std::string result = "[";
-      for (int i = 0; i < dim; i++) {
+      for (int i = 1; i <= dim; i++) {
         if(checkCandidate(i))
         {
           result.append(convertInt(i));
@@ -131,7 +132,12 @@ struct CandidateList {
     }
     else
     {
-      return 1+__builtin_ffs(conflicts);
+      printf("candidate list is ");
+      std::cout << toString();
+      printf(", next candidate is %i is ", __builtin_ffs(conflicts));
+      std::bitset<32> x(conflicts);
+      std::cout << x << "\n";
+      return __builtin_ffs(conflicts);
     }
   }
   
