@@ -7,7 +7,7 @@
 
 #include "sudoku_helper_serial.cpp"
 
-static int testLevel = 1;
+static int testLevel = 0;
 
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {

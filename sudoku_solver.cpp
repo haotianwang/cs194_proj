@@ -7,8 +7,6 @@
 
 #include "sudoku_helper.cpp"
 
-static int testLevel = 1;
-
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {
   if (testLevel > 0) printf("step 1: on (%i, %i)\n", p->getCurrentRow(), p->getCurrentCol());
@@ -38,7 +36,7 @@ bool assignAndValidate(Puzzle* p) {
     //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
     //printf("post-assign candidate list: \n"); 
     //p->printInitCandidates();    
-//    printf("step 3: updateNeighborConflicts succeeded\n");
+    //printf("step 3: updateNeighborConflicts succeeded\n");
     return p->checkNeighborAssignments(p->getCurrentRow(), p->getCurrentCol());
   }
   else {
@@ -85,8 +83,8 @@ int main(int argc, char *argv[]) {
   }
 
   int** grid = fileTo2dArray(argv[1], atoi(argv[2]));
-  Puzzle* p = new Puzzle(grid, atoi(argv[2]));
-  p->initialize();
+  Puzzle p = Puzzle(grid, atoi(argv[2]));
+  p.initialize();
 
   /*  
   p->printGridDim();
@@ -115,33 +113,79 @@ int main(int argc, char *argv[]) {
   */
 
   //int counter=10000;  
-  while (!p->isSolved()) {
+  while (!p.isSolved()) {
   //while (!p->isSolved() && counter>0) {
     //counter--;
+    if (testLevel > 0) printf("step 1: on (%i, %i)\n", p.getCurrentRow(), p.getCurrentCol());
+    //printf("step 1: current row %i, current col %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
+    bool hasCandidate = p.checkCandidates(p.getCurrentRow(), p.getCurrentCol(), false);
     //printf("step 1\n");
     // step 1
-    if (checkCurrentCandidates(p)) {
+    if (hasCandidate) {
       //printf("step 3\n");
       // step 3
-      bool succeeded = assignAndValidate(p);
+      bool succeeded;
+      if (p.assign(p.getCurrentRow(), p.getCurrentCol())) {
+        if (testLevel > 0) 
+          printf("step 3: on (%i, %i), assigned %i\n", p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()));
+        //printf("step 3: assignment succeeded\n");
+        //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
+        //printf("pre-assign candidate list: \n"); 
+        //p->printInitCandidates();
+        // deprecated
+        //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
+        //printf("post-assign candidate list: \n"); 
+        //p->printInitCandidates();    
+        //printf("step 3: updateNeighborConflicts succeeded\n");
+        succeeded = p.checkNeighborAssignments(p.getCurrentRow(), p.getCurrentCol());
+      }
+      else {
+        printf("error: reached slot with no candidates. shouldn't happen. exiting.\n");
+        exit(1);
+      }
+
       if (succeeded) {
         //printf("step 5\n");
         // step 5
-        advanceSlot(p);
+        if (testLevel > 0) printf("step 5: next slot\n");
+        p.nextSlot();
+        p.copyCandidates(p.getCurrentRow(), p.getCurrentCol());
       }
       else {
         //printf("step 4\n");
         // step 4
-        backtrack(p);
+        if (testLevel > 0) 
+          printf("step 4: on (%i, %i), unassigning %i\n", p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()));
+        //printf("pre-update candidate list: \n"); 
+        //p.printInitCandidates();
+        //deprecated
+        //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
+        //printf("post-update candidate list: \n"); 
+        //p->printInitCandidates();
+        p.removeAndInvalidate(p.getCurrentRow(), p.getCurrentCol());
+        // loops back to front
       }
     }
     else {
       //printf("step 2\n");
       // step 2
-      if (reverseSlot(p)) {
+      if (testLevel > 0) printf("step 2: reversing slot\n");
+      p.resetCandidates(p.getCurrentRow(), p.getCurrentCol());
+      bool reversedSlot = p.prevSlot();
+
+      if (reversedSlot) {
         //printf("step 4\n");
         // step 4
-        backtrack(p);
+        if (testLevel > 0) 
+          printf("step 4: on (%i, %i), unassigning %i\n", p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()));
+        //printf("pre-update candidate list: \n"); 
+        //p.printInitCandidates();
+        //deprecated
+        //p.updateNeighborConflicts(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()), false);
+        //printf("post-update candidate list: \n"); 
+        //p.printInitCandidates();
+        p.removeAndInvalidate(p.getCurrentRow(), p.getCurrentCol());
+        // loops back to front
       }
       else {
         //printf("step 2 failed\n");
@@ -150,9 +194,9 @@ int main(int argc, char *argv[]) {
     }
   }
   
-  if (p->isSolved()) {
+  if (p.isSolved()) {
     printf("solution found!\n");
-    p->printGrid();
+    p.printGrid();
   }
   else {
     printf("no solution found\n");
@@ -160,7 +204,7 @@ int main(int argc, char *argv[]) {
   
   
   //printf("deinitializing\n");
-  p->deinitialize();
+  p.deinitialize();
   //printf("deinitialized\n");
   delete2dIntArray(grid, atoi(argv[2]));
   //printf("deleted original array.\n");

@@ -8,6 +8,8 @@
 #include <math.h>
 #include <bitset>
 
+static int testLevel = 0;
+
 void delete2dIntArray(int** array, int dim);
 void delete2dBoolArray(bool** array, int dim);
 void freeEmpty3dBoolArray(bool*** array, int dim);
@@ -136,11 +138,14 @@ struct CandidateList {
     }
     else
     {
-      printf("candidate list is ");
-      std::cout << toString();
-      printf(", next candidate is %i is ", __builtin_ffs(conflicts));
-      std::bitset<32> x(conflicts);
-      std::cout << x << "\n";
+      if (testLevel > 1) {
+        printf("candidate list is ");
+        std::cout << toString();
+        printf(", next candidate is %i is ", __builtin_ffs(conflicts));
+        std::bitset<32> x(conflicts);
+        std::cout << x << "\n";
+      }
+
       return __builtin_ffs(conflicts);
     }
   }
