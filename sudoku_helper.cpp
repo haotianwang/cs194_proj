@@ -78,7 +78,7 @@ struct CandidateList {
     std::string toString() {
       std::string result = "[";
       for (int i = 0; i < dim; i++) {
-        if(checkCandidates(i))
+        if(checkCandidate(i))
         {
           result.append(convertInt(i));
           if (i+1 < dim) {
@@ -106,7 +106,7 @@ struct CandidateList {
   //returns whether the given value is still valid
     bool checkCandidate(int given) //Brennan
   {
-    if (int>25 || int<1)
+    if (given>25 || given<1)
     {
       printf("Invalid index given to checkCandidate!");
       return false;
