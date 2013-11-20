@@ -97,22 +97,29 @@ struct CandidateList {
       conflicts^=1<<(num-1);
     }
 
-   //returns whether given value is valid, or if there is some valid value
-    bool checkCandidates(int given=33) //Brennan
+   //returns whether there is some valid value
+    bool checkCandidates() //Brennan
 	{
-		if (given==33)
+    return conflicts!=0;
+	}
+  
+  //returns whether the given value is still valid
+    bool checkCandidate(int given) //Brennan
+  {
+    if (int>25 || int<1)
     {
-      return conflicts!=0;
+      printf("Invalid index given to checkCandidate!");
+      return false;
     }
     else
     {
-      return conflicts&(1<<given)==1;
+      return conflicts&(1<<(given-1))==1;
     }
-	}
+  }
   
   void invalidateCandidate(int i)
   {
-    conflicts&=~(1<<i);
+    conflicts&=~(1<<(i-1));
   }
 
   // For Brennan
