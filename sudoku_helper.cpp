@@ -229,9 +229,11 @@ struct Puzzle {
     void setupSudokuVector() {
       sudokuVectorRows =  new int*[dim];
       sudokuVectorCols = new int*[dim];
+      //number in sudoku puzzle
       for (int i = 0; i < dim; i++) {
         sudokuVectorRows[dim] = new int[dim];
         sudokuVectorCols[dim] = new int[dim];
+        //row or col number
         for (int j = 0; j < dim; j++) {
           setRow(i, j, 0);
           setCol(i, j, 0);
@@ -369,6 +371,58 @@ struct Puzzle {
     void setCol(int colToSet, int numOfGrid, int numToSet) {
       assertNumValid(numOfGrid);
       sudokuVectorCols[numOfGrid-1][colToSet] = numToSet;
+    }
+    
+    void set(int rowCheck, int colCheck, int numToSet, bool setToOn)
+    {
+      if (setToOn)
+      {
+        if (checkBlock(rowCheck, colCheck, numToSet))
+        {
+          int row=getRow(rowCheck, numToSet);
+          int col=getCol(colCheck, numToSet);
+          row|=1<<colCheck;
+          col|=1<<rowCheck;
+          setRow(rowCheck, numToSet, row);
+          setCol(colCheck, numToSet, col);
+        }
+      }
+      else
+      {
+        setRow(rowCheck, numToSet, 0);
+        setCol(colCheck, numToSet, 0);
+      }
+    }
+    
+    //takes the row number and the number to check, returns if it is valid to assign in this row
+    bool checkRow(int rowToCheck, int numOfGrid)
+    {
+      return getRow(rowToCheck, numOfGrid)==0;
+    }
+    
+    //takes the col number and the number to check, returns if it is valid to assign in this col
+    bool checkCol(int colToCheck, int numOfGrid)
+    {
+      return getCol(colToCheck, numOfGrid)==0;
+    }
+    
+    //takes the row number, the col number, and the number to check, 
+    //and checks the number is valid to assign to this block
+    bool checkBlock(int row, int col, int numOfGrid)
+    {     
+      int startBlockRow=(row/blockSize)*blockSize;
+      int startBlockCol=(col/blockSize)*blockSize;
+      int endBlockRow=startBlockRow+blockSize;
+      int endBlockCol=startBlockCol+blockSize;
+      
+      for (int j=startBlockRow, k=startBlockCol; j<endBlockRow&&k<endBlockCol; j++, k++)
+      {
+        if (checkRow(getRow(j, numOfGrid), numOfGrid)==false || checkCol(getCol(k, numOfGrid), numOfGrid)==false)
+        {
+          return false;
+        }
+      }
+      return true;
     }
     
     bool nextSlot() //Brennan
@@ -699,83 +753,6 @@ struct Puzzle {
       return true;
     }
     
-    
-    void set(int row, int col, int numToSet, bool setToOn)
-    {
-      int num;
-      if (setToOn)
-      {
-        num|=1<<__builtin_ffs(num);
-      }
-      else
-      {
-        num&=~(1<<__builtin_ffs(num));
-      }
-    }
-    
-    
-    bool checkRow(int check, int gridNum)
-    {
-      //retrieves the bit vector representing the row
-      int row=getRow(check, gridNum);
-      //checks to see if any bits in the row vector are set; if yes, the number is already here
-      return row!=0;
-    }
-    
-    bool checkCol(int check, int gridNum)
-    {
-      //retrieves the bit vector representing the column
-      int col=getCol(check, gridNum);
-      //checks to see if any bits in the column vector are set; if yes, the number is already here
-      return col!=0;
-    }
-    
-    /*
-    bool checkBlock(int rowCheck, int colCheck, int gridNum)
-    {
-      int row=getRow(check, gridNum);
-      int col=getCol(check, gridNum);
-      
-      int startBlockRow = startOfCurrentBlockRow(x);
-      int startBlockCol = startOfCurrentBlockCol(y);
-      int endBlockRow = startBlockRow + blockSize;
-      int endBlockCol = startBlockCol + blockSize;
-      
-      
-      
-    }
-    
-    int startOfCurrentBlockIndex(int currentIndex) {
-      return (currentIndex / blockSize) * blockSize;
-    }
-    
-    bool checkNeighborAssignments(int x, int y) {
-      int current = sudoku[x][y];
-    
-      for (int i = 0; i < dim; i++) {
-        if (sudoku[x][i] == current && i != y) {
-          return false;
-        }
-        if (sudoku[i][y] == current && i != x) {
-          return false;
-        }
-      }
-      
-      int startBlockRow = startOfCurrentBlockRow(x);
-      int startBlockCol = startOfCurrentBlockCol(y);
-      int endBlockRow = startBlockRow + blockSize;
-      int endBlockCol = startBlockCol + blockSize;
-      
-      for (int j = startBlockRow; j < endBlockRow; j++) {
-        for (int k = startBlockCol; k < endBlockCol; k++) {
-          if (j != x && k != y) {
-            if (sudoku[j][k] == current) {
-              return false;
-            }
-          }
-        }
-      }
-      */
 };
 
 int** fileTo2dArray(char* fileName, int dim) {
