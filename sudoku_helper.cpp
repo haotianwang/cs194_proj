@@ -227,9 +227,11 @@ struct Puzzle {
     }
 
     void setupSudokuVector() {
-      sudokuVectorRows =  new int[dim][dim];
-      sudokuVectorCols = new int[dim][dim];
+      sudokuVectorRows =  new int*[dim];
+      sudokuVectorCols = new int*[dim];
       for (int i = 0; i < dim; i++) {
+        sudokuVectorRows[dim] = new int[dim];
+        sudokuVectorCols[dim] = new int[dim];
         for (int j = 0; j < dim; j++) {
           setRow(i, j, 0);
           setCol(i, j, 0);
@@ -351,13 +353,13 @@ struct Puzzle {
       }
     }
 
-    int getRow(int rowToGet, in numOfGrid) {
+    int getRow(int rowToGet, int numOfGrid) {
       assertNumValid(numOfGrid);
       return sudokuVectorRows[numOfGrid-1][rowToGet];
     }
     int getCol(int colToGet, int numOfGrid) {
       assertNumValid(numOfGrid);
-      return sudokuVectorCols[numOfGrid-1][rowToGet];
+      return sudokuVectorCols[numOfGrid-1][colToGet];
     }
 
     void setRow(int rowToSet, int numOfGrid, int numToSet) {
