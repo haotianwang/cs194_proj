@@ -710,10 +710,85 @@ struct Puzzle {
       
       return true;
     }
+    
+    
+    void set(int row, int col, int numToSet, bool setToOn)
+    {
+      int num;
+      if (setToOn)
+      {
+        num|=1<<__builtin_ffs(num);
+      }
+      else
+      {
+        num&=~(1<<__builtin_ffs(num));
+      }
+    }
+    
+    
+    bool checkRow(int check, int gridNum)
+    {
+      //retrieves the bit vector representing the row
+      int row=getRow(check, gridNum);
+      //checks to see if any bits in the row vector are set; if yes, the number is already here
+      return row!=0;
+    }
+    
+    bool checkCol(int check, int gridNum)
+    {
+      //retrieves the bit vector representing the column
+      int col=getCol(check, gridNum);
+      //checks to see if any bits in the column vector are set; if yes, the number is already here
+      return col!=0;
+    }
+    
+    /*
+    bool checkBlock(int rowCheck, int colCheck, int gridNum)
+    {
+      int row=getRow(check, gridNum);
+      int col=getCol(check, gridNum);
+      
+      int startBlockRow = startOfCurrentBlockRow(x);
+      int startBlockCol = startOfCurrentBlockCol(y);
+      int endBlockRow = startBlockRow + blockSize;
+      int endBlockCol = startBlockCol + blockSize;
+      
+      
+      
+    }
+    
+    int startOfCurrentBlockIndex(int currentIndex) {
+      return (currentIndex / blockSize) * blockSize;
+    }
+    
+    bool checkNeighborAssignments(int x, int y) {
+      int current = sudoku[x][y];
+    
+      for (int i = 0; i < dim; i++) {
+        if (sudoku[x][i] == current && i != y) {
+          return false;
+        }
+        if (sudoku[i][y] == current && i != x) {
+          return false;
+        }
+      }
+      
+      int startBlockRow = startOfCurrentBlockRow(x);
+      int startBlockCol = startOfCurrentBlockCol(y);
+      int endBlockRow = startBlockRow + blockSize;
+      int endBlockCol = startBlockCol + blockSize;
+      
+      for (int j = startBlockRow; j < endBlockRow; j++) {
+        for (int k = startBlockCol; k < endBlockCol; k++) {
+          if (j != x && k != y) {
+            if (sudoku[j][k] == current) {
+              return false;
+            }
+          }
+        }
+      }
+      */
 };
-
-
-
 
 int** fileTo2dArray(char* fileName, int dim) {
   std::string line;
