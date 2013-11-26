@@ -653,13 +653,14 @@ struct Puzzle {
     
     void set(int row, int col, int numToSet, bool setToOn)
     {
+      int num;
       if (setToOn)
       {
-      
+        num|=1<<__builtin_ffs(num);
       }
       else
       {
-        
+        num&=~(1<<__builtin_ffs(num));
       }
     }
     
