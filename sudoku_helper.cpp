@@ -497,9 +497,15 @@ struct Puzzle {
     void removeAndInvalidate(int x, int y) //Brennan
     {
       currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]);
+      //vectorization
+      removeAndInvalidateVector(x, y);
       sudoku[x][y]=-1;
     }
 
+    void removeAndInvaldateVector(int x, int y) {
+      int numOfGrid = sudoku[x][y] - 1;
+      set(x, y, numOfGrid, false);
+    }
     
     //the conflicts count of x, y, number i's conflicts gets incremented by delta
     // deprecated
@@ -647,13 +653,14 @@ struct Puzzle {
     
     bool checkNeighborAssignments(int x, int y) {
       int current = sudoku[x][y];
+      bool result;
     
       for (int i = 0; i < dim; i++) {
         if (sudoku[x][i] == current && i != y) {
-          return false;
+          result = false;
         }
         if (sudoku[i][y] == current && i != x) {
-          return false;
+          result = false;
         }
       }
       
@@ -666,13 +673,25 @@ struct Puzzle {
         for (int k = startBlockCol; k < endBlockCol; k++) {
           if (j != x && k != y) {
             if (sudoku[j][k] == current) {
-              return false;
+              result = false;
             }
           }
         }
       }
       
-      return true;
+      result = true;
+
+      // vectorization
+      if (checkNeighborAssignmentsVector(x, y) != result) {
+        printf("vector check neighbor assignments and non-vectorized version doesn't match\n");
+        exit(1);
+      }
+      return result;
+    }
+
+    bool checkNeighborAssignmentsVector(int x, int y) {
+      int numToCheck = getCurrentAssigned(x, y);
+      return checkRow(x, numToCheck) && checkCol(y, numToCheck) && checkBlock(x, y, numToCheck);
     }
     
     // deprecated
@@ -723,6 +742,8 @@ struct Puzzle {
       }
       else {
         sudoku[x][y] = toBeAssigned;
+        //vectorization
+        set(x, y, toBeAssigned, true);
         return true;
       }
     }
