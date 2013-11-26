@@ -176,6 +176,8 @@ struct CandidateList {
 
 struct Puzzle {
 	// passed in
+  int** sudokuVectorRows;
+  int** sudokuVectorCols;
   int** sudoku;
   int dim;
   bool initialized;
@@ -201,6 +203,9 @@ struct Puzzle {
       setupPreassigned();
       //printf("preassigned set\n");
       setupCandidateLists();
+
+      setupSudokuVector();
+
       //printf("candidate lists set\n");
       currentCol = 0;
       currentRow = 0;
@@ -217,7 +222,22 @@ struct Puzzle {
     void deinitialize() {
       teardownPreassigned();
       teardownCandidateLists();
+      teardownSudokuVector();
       initialized = false;
+    }
+
+    void setupSudokuVector() {
+      sudokuVectorRows =  new int[dim][dim];
+      sudokuVectorCols = new int[dim][dim];
+      for (int i = 0; i < dim; i++) {
+        setRow()
+        sudokuVectorCols[i] = 0;
+      }
+    }
+
+    void teardownSudokuVector() {
+      delete sudokuVectorRows;
+      delete sudokuVectorCols;
     }
     
     void setupPreassigned() {
@@ -320,6 +340,47 @@ struct Puzzle {
     void resetCandidates(int x, int y) //Brennan
     {
     	//initCandidates[x][y]=currentCandidates[x][y];
+    }
+
+    void assertNumValid(int num) {
+      if (num < 1 || num > dim-1) {
+        printf("invalid input number: %i\n", num);
+        exit(1);
+      }
+    }
+
+    int getRow(int rowToGet, in numOfGrid) {
+      assertNumValid(numOfGrid);
+      return sudokuVectorRows[numOfGrid-1];
+    }
+    int getCol(int colToGet, int numOfGrid) {
+      assertNumValid(numOfGrid);
+      return sudokuVectorCols[numOfGrid-1];
+    }
+
+    void setRow(int rowToSet, int numOfGrid) {
+      assertNumValid(numOfGrid);
+      sudokuVectorRows[numOfGrid-1] = rowToSet;
+    }
+    void setCol(int colToSet, int numOfGrid) {
+      assertNumValid(numOfGrid);
+    }
+
+    //brennan
+    bool checkRow(int rowTocheck, numOfGrid) {
+      return false;
+    }
+    //brennan
+    bool checkCol(int colToCheck, numOfGrid) {
+      return false;
+    }
+    //brennan
+    bool checkBlock(int rowToCheck, int colToCheck, int numOfGrid) {
+      return false;
+    }
+    //brennan
+    void set(int row, int col, int numToSet, bool setToOn) {
+      return false;
     }
     
     bool nextSlot() //Brennan
