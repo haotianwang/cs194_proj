@@ -230,14 +230,16 @@ struct Puzzle {
       sudokuVectorRows =  new int[dim][dim];
       sudokuVectorCols = new int[dim][dim];
       for (int i = 0; i < dim; i++) {
-        setRow()
-        sudokuVectorCols[i] = 0;
+        for (int j = 0; j < dim; j++) {
+          setRow(i, j, 0);
+          setCol(i, j, 0);
+        }
       }
     }
 
     void teardownSudokuVector() {
-      delete sudokuVectorRows;
-      delete sudokuVectorCols;
+      delete[] sudokuVectorRows;
+      delete[] sudokuVectorCols;
     }
     
     void setupPreassigned() {
@@ -351,36 +353,20 @@ struct Puzzle {
 
     int getRow(int rowToGet, in numOfGrid) {
       assertNumValid(numOfGrid);
-      return sudokuVectorRows[numOfGrid-1];
+      return sudokuVectorRows[numOfGrid-1][rowToGet];
     }
     int getCol(int colToGet, int numOfGrid) {
       assertNumValid(numOfGrid);
-      return sudokuVectorCols[numOfGrid-1];
+      return sudokuVectorCols[numOfGrid-1][rowToGet];
     }
 
-    void setRow(int rowToSet, int numOfGrid) {
+    void setRow(int rowToSet, int numOfGrid, int numToSet) {
       assertNumValid(numOfGrid);
-      sudokuVectorRows[numOfGrid-1] = rowToSet;
+      sudokuVectorRows[numOfGrid-1][rowToSet] = numToSet;
     }
-    void setCol(int colToSet, int numOfGrid) {
+    void setCol(int colToSet, int numOfGrid, int numToSet) {
       assertNumValid(numOfGrid);
-    }
-
-    //brennan
-    bool checkRow(int rowTocheck, numOfGrid) {
-      return false;
-    }
-    //brennan
-    bool checkCol(int colToCheck, numOfGrid) {
-      return false;
-    }
-    //brennan
-    bool checkBlock(int rowToCheck, int colToCheck, int numOfGrid) {
-      return false;
-    }
-    //brennan
-    void set(int row, int col, int numToSet, bool setToOn) {
-      return false;
+      sudokuVectorCols[numOfGrid-1][colToSet] = numToSet;
     }
     
     bool nextSlot() //Brennan
