@@ -17,7 +17,7 @@ void print2dArray(int** grid, int dim);
 int* file2dArray(char* fileName, int dim);
 std::string convertInt(int number);
 
-static int testLevel = 1;
+static int testLevel = 0;
 
 struct CandidateList {
 	int* conflicts;
@@ -296,7 +296,6 @@ struct Puzzle {
     	return true;
       */
       if (numUnassigned == positionOnVisited + 1) {
-        printf("next slot returning false, numUnassigned is %i and positionOnVisited is %i\n", numUnassigned, positionOnVisited);
         return false;
       }
       else {
