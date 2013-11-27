@@ -8,7 +8,7 @@
 #include <math.h>
 #include <bitset>
 
-static int testLevel = 0;
+static int testLevel = 2;
 
 void delete2dIntArray(int** array, int dim);
 void delete2dBoolArray(bool** array, int dim);
@@ -119,7 +119,9 @@ struct CandidateList {
     }
     else
     {
-      return conflicts&(1<<(given-1))!=0;
+      std::bitset<32>x(conflicts);
+      return x.test(given-1);
+      //return conflicts & (1<<(given-1)) != 0;
     }
   }
   
@@ -169,8 +171,10 @@ struct CandidateList {
 
 struct Puzzle {
 	// passed in
-  int** sudokuVectorRows;
-  int** sudokuVectorCols;
+
+  // VectorRows: int[number of the grid][the row]
+  unsigned int** sudokuVectorRows;
+  unsigned int** sudokuVectorCols;
   int** sudoku;
   int dim;
   bool initialized;
@@ -220,20 +224,31 @@ struct Puzzle {
     }
 
     void setupSudokuVector() {
-      sudokuVectorRows =  new int*[dim];
-      sudokuVectorCols = new int*[dim];
+      sudokuVectorRows =  new unsigned int*[dim];
+      sudokuVectorCols = new unsigned int*[dim];
       //number in sudoku puzzle
       for (int i = 0; i < dim; i++) {
-        sudokuVectorRows[dim] = new int[dim];
-        sudokuVectorCols[dim] = new int[dim];
+        sudokuVectorRows[i] = new unsigned int[dim];
+        sudokuVectorCols[i] = new unsigned int[dim];
         //row or col number
         for (int j = 0; j < dim; j++) {
-          printf("calling from setupSudokuVector: setRow(%i, %i, 0)\n", i, j);
-          setRow(i, j, 0);
-          printf("calling from setupSudokuVector: setCol(%i, %i, 0)\n", i, j);
-          setCol(i, j, 0);
+          printf("calling from setupSudokuVector: setRow(%i, %i, 0)\n", j, i+1);
+          setRow(j, i+1, 0);
+          printf("calling from setupSudokuVector: setCol(%i, %i, 0)\n", j, i+1);
+          setCol(j, i+1, 0);
         }
       }
+
+      for (int row = 0; row < dim; row++) {
+        for (int col = 0; col < dim; col++) {
+          int current = getCurrentAssigned(row, col);
+          if (current > -1) {
+            set(row, col, current, true);
+          }
+        }
+      }
+
+      if (testLevel > 0) printf("set up sudoku vector done\n");
     }
 
     void teardownSudokuVector() {
@@ -374,13 +389,13 @@ struct Puzzle {
       {
         if (checkBlock(rowCheck, colCheck, numToSet) && checkRow(rowCheck, numToSet) && checkCol(colCheck, numToSet))
         {
-          int row=getRow(rowCheck, numToSet);
-          int col=getCol(colCheck, numToSet);
+          unsigned int row=getRow(rowCheck, numToSet);
+          unsigned int col=getCol(colCheck, numToSet);
           row|=1<<(colCheck-1);
           col|=1<<(rowCheck-1);
-          printf("calling from if of set: setRow(%i, %i, %i)\n", rowCheck, numToSet, row);
+          printf("calling from if of set: setRow(%i, %i, %u)\n", rowCheck, numToSet, row);
           setRow(rowCheck, numToSet, row);
-          printf("calling from if of set: setCol(%i, %i, %i)\n", colCheck, numToSet, col);
+          printf("calling from if of set: setCol(%i, %i, %u)\n", colCheck, numToSet, col);
           setCol(colCheck, numToSet, col);
         }
         else {
@@ -680,9 +695,11 @@ struct Puzzle {
     
       for (int i = 0; i < dim; i++) {
         if (sudoku[x][i] == current && i != y) {
+          if (testLevel > 1) printf("non-vector row check failed for %i on (%i, %i)\n", current, x, i);
           result = false;
         }
         if (sudoku[i][y] == current && i != x) {
+          if (testLevel > 1) printf("non-vector col check failed for %i on (%i, %i)\n", current, i, y);
           result = false;
         }
       }
@@ -696,6 +713,7 @@ struct Puzzle {
         for (int k = startBlockCol; k < endBlockCol; k++) {
           if (j != x && k != y) {
             if (sudoku[j][k] == current) {
+              if (testLevel > 1) printf("non-vector block check failed for %i on (%i, %i)\n", current, j, k);
               result = false;
             }
           }
@@ -705,11 +723,13 @@ struct Puzzle {
       result = true;
 
       // vectorization
+      
       if (checkNeighborAssignmentsVector(x, y, current) != result) {
         printf("vector check neighbor assignments and non-vectorized version doesn't match\n");
         exit(1);
       }
       return result;
+
     }
 
     bool checkNeighborAssignmentsVector(int x, int y, int currentlyAssigned) {
