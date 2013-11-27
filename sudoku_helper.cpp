@@ -393,9 +393,13 @@ struct Puzzle {
           unsigned int col=getCol(colCheck, numToSet);
           row|=1<<(colCheck-1);
           col|=1<<(rowCheck-1);
-          printf("calling from if of set: setRow(%i, %i, %u)\n", rowCheck, numToSet, row);
+          printf("calling from if of set: setRow(%i, %i, ", rowCheck, numToSet);
+          std::bitset<32> x(row);
+          std::cout << x << ")\n";
           setRow(rowCheck, numToSet, row);
-          printf("calling from if of set: setCol(%i, %i, %u)\n", colCheck, numToSet, col);
+          printf("calling from if of set: setCol(%i, %i, ", colCheck, numToSet);
+          std::bitset<32> x(col);
+          std::cout << x << ")\n";
           setCol(colCheck, numToSet, col);
         }
         else {
@@ -725,8 +729,8 @@ struct Puzzle {
         printf("vector check neighbor assignments and non-vectorized version doesn't match\n");
         exit(1);
       }
-      
       return result;
+
     }
 
     bool checkNeighborAssignmentsVector(int x, int y, int currentlyAssigned) {
