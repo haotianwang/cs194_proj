@@ -8,7 +8,7 @@
 #include <math.h>
 #include <bitset>
 
-static int testLevel = 2;
+static int testLevel = 0;
 
 void delete2dIntArray(int** array, int dim);
 void delete2dBoolArray(bool** array, int dim);
@@ -232,9 +232,11 @@ struct Puzzle {
         sudokuVectorCols[i] = new unsigned int[dim];
         //row or col number
         for (int j = 0; j < dim; j++) {
-          printf("calling from setupSudokuVector: setRow(%i, %i, 0)\n", j, i+1);
+          if (testLevel > 1)
+            printf("calling from setupSudokuVector: setRow(%i, %i, 0)\n", j, i+1);
           setRow(j, i+1, 0);
-          printf("calling from setupSudokuVector: setCol(%i, %i, 0)\n", j, i+1);
+          if (testLevel > 1)
+            printf("calling from setupSudokuVector: setCol(%i, %i, 0)\n", j, i+1);
           setCol(j, i+1, 0);
         }
       }
@@ -392,16 +394,22 @@ struct Puzzle {
           unsigned int row=getRow(rowCheck, numToSet);
           unsigned int col=getCol(colCheck, numToSet);
 
-          printBinary(row);
-          printBinary(col);
+          if (testLevel > 1) {
+            printBinary(row);
+            printBinary(col);
+          }
 
           row|=1<<(colCheck);
           col|=1<<(rowCheck);
-          printf("calling from if of set: setRow(%i, %i, ", rowCheck, numToSet);
-          printBinary(row);
+          if (testLevel > 1) {
+            printf("calling from if of set: setRow(%i, %i, ", rowCheck, numToSet);
+            printBinary(row);
+          }
           setRow(rowCheck, numToSet, row);
-          printf("calling from if of set: setCol(%i, %i, ", colCheck, numToSet);
-          printBinary(col);
+          if (testLevel > 1) {
+            printf("calling from if of set: setCol(%i, %i, ", colCheck, numToSet);
+            printBinary(col);
+          }
           setCol(colCheck, numToSet, col);
         }
         else {
@@ -411,9 +419,11 @@ struct Puzzle {
       }
       else
       {
-        printf("calling from else of set: setRow(%i, %i, 0)\n", rowCheck, numToSet);
+        if (testLevel > 1)
+          printf("calling from else of set: setRow(%i, %i, 0)\n", rowCheck, numToSet);
         setRow(rowCheck, numToSet, 0);
-        printf("calling from if of set: setCol(%i, %i, 0)\n", colCheck, numToSet);
+        if (testLevel > 1)
+          printf("calling from if of set: setCol(%i, %i, 0)\n", colCheck, numToSet);
         setCol(colCheck, numToSet, 0);
       }
     }
