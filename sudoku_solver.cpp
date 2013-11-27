@@ -166,7 +166,7 @@ int main(int argc, char *argv[]) {
         //printf("step 4\n");
         // step 4
         if (testLevel > 0) 
-          printf("step 4: on (%i, %i), unassigning %i\n", p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()));
+          printf("step 4: on (%i, %i), unassigning %i after initial check\n", p.getCurrentRow(), p.getCurrentCol(), nextCandidate);
         //printf("pre-update candidate list: \n"); 
         //p.printInitCandidates();
         //deprecated
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]) {
         //p.updateNeighborConflicts(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()), false);
         //printf("post-update candidate list: \n"); 
         //p.printInitCandidates();
-        p.removeAndInvalidate(p.getCurrentRow(), p.getCurrentCol());
+        p.removeAndInvalidate(p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()));
         // loops back to front
       }
       else {

@@ -391,15 +391,17 @@ struct Puzzle {
         {
           unsigned int row=getRow(rowCheck, numToSet);
           unsigned int col=getCol(colCheck, numToSet);
-          row|=1<<(colCheck-1);
-          col|=1<<(rowCheck-1);
+
+          printBinary(row);
+          printBinary(col);
+
+          row|=1<<(colCheck);
+          col|=1<<(rowCheck);
           printf("calling from if of set: setRow(%i, %i, ", rowCheck, numToSet);
-          std::bitset<32> x(row);
-          std::cout << x << ")\n";
+          printBinary(row);
           setRow(rowCheck, numToSet, row);
           printf("calling from if of set: setCol(%i, %i, ", colCheck, numToSet);
-          std::bitset<32> x(col);
-          std::cout << x << ")\n";
+          printBinary(col);
           setCol(colCheck, numToSet, col);
         }
         else {
@@ -414,6 +416,11 @@ struct Puzzle {
         printf("calling from if of set: setCol(%i, %i, 0)\n", colCheck, numToSet);
         setCol(colCheck, numToSet, 0);
       }
+    }
+
+    void printBinary(unsigned int num) {
+          std::bitset<32> y(num);
+          std::cout << y << ")\n";
     }
     
     //takes the row number and the number to check, returns if it is valid to assign in this row
@@ -536,14 +543,19 @@ struct Puzzle {
     
     void removeAndInvalidate(int x, int y, int numToInvalidate) //Brennan
     {
-      currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]);
+      currentCandidates[x][y]->invalidateCandidate(numToInvalidate);
       //vectorization
-      removeAndInvalidateVector(x, y);
+      if (getCurrentAssigned(x, y) != -1) {
+        // Set this row/col to zero only if the slot being set to zero is the current slot,
+        // Otherwise numToInvalidate has not even been set int he puzzle, and invalidate
+        // would invalidate some other slot
+        removeAndInvalidateVector(x, y, numToInvalidate);
+      }
       sudoku[x][y]=-1;
     }
 
-    void removeAndInvalidateVector(int x, int y) {
-      int numOfGrid = sudoku[x][y] - 1;
+    void removeAndInvalidateVector(int x, int y, int numToInvalidate) {
+      int numOfGrid = numToInvalidate;
       if (numOfGrid > 0 && numOfGrid < dim + 1) {
         set(x, y, numOfGrid, false);
       }
