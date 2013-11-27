@@ -119,8 +119,7 @@ struct CandidateList {
     }
     else
     {
-      std::bitset<32> x(conflicts);
-      return x.test(given-1);
+      return conflicts&(1<<(given-1))!=0;
     }
   }
   
@@ -129,25 +128,19 @@ struct CandidateList {
     conflicts&=~(1<<(i-1));
   }
 
-  // For Brennan
+  // Brennan
   int nextCandidate() {
     //should return the next candidate, or 0 if there are none
-    if (conflicts==0)
-    {
-      return 0;
-    }
-    else
-    {
-      if (testLevel > 1) {
-        printf("candidate list is ");
-        std::cout << toString();
-        printf(", next candidate is %i is ", __builtin_ffs(conflicts));
-        std::bitset<32> x(conflicts);
-        std::cout << x << "\n";
-      }
 
-      return __builtin_ffs(conflicts);
+    if (testLevel > 1) {
+      printf("candidate list is ");
+      std::cout << toString();
+      printf(", next candidate is %i is ", __builtin_ffs(conflicts));
+      std::bitset<32> x(conflicts);
+      std::cout << x << "\n";
     }
+
+    return __builtin_ffs(conflicts);
   }
   
   // protected unsigned int getConflictList()
@@ -235,7 +228,9 @@ struct Puzzle {
         sudokuVectorCols[dim] = new int[dim];
         //row or col number
         for (int j = 0; j < dim; j++) {
+          printf("calling from setupSudokuVector: setRow(%i, %i, 0)\n", i, j);
           setRow(i, j, 0);
+          printf("calling from setupSudokuVector: setCol(%i, %i, 0)\n", i, j);
           setCol(i, j, 0);
         }
       }
@@ -357,39 +352,43 @@ struct Puzzle {
 
     int getRow(int rowToGet, int numOfGrid) {
       assertNumValid(numOfGrid);
-      return sudokuVectorRows[numOfGrid-1][rowToGet];
+      return sudokuVectorRows[numOfGrid][rowToGet];
     }
     int getCol(int colToGet, int numOfGrid) {
       assertNumValid(numOfGrid);
-      return sudokuVectorCols[numOfGrid-1][colToGet];
+      return sudokuVectorCols[numOfGrid][colToGet];
     }
 
     void setRow(int rowToSet, int numOfGrid, int numToSet) {
       assertNumValid(numOfGrid);
-      sudokuVectorRows[numOfGrid-1][rowToSet] = numToSet;
+      sudokuVectorRows[numOfGrid][rowToSet] = numToSet;
     }
     void setCol(int colToSet, int numOfGrid, int numToSet) {
       assertNumValid(numOfGrid);
-      sudokuVectorCols[numOfGrid-1][colToSet] = numToSet;
+      sudokuVectorCols[numOfGrid][colToSet] = numToSet;
     }
     
     void set(int rowCheck, int colCheck, int numToSet, bool setToOn)
     {
       if (setToOn)
       {
-        if (checkBlock(rowCheck, colCheck, numToSet))
+        if (checkBlock(rowCheck, colCheck, numToSet) && checkRow(rowCheck, numToSet) && checkCol(colCheck, numToSet))
         {
           int row=getRow(rowCheck, numToSet);
           int col=getCol(colCheck, numToSet);
-          row|=1<<colCheck;
-          col|=1<<rowCheck;
+          row|=1<<(colCheck-1);
+          col|=1<<(rowCheck-1);
+          printf("calling from if of set: setRow(%i, %i, %i)\n", rowCheck, numToSet, row);
           setRow(rowCheck, numToSet, row);
+          printf("calling from if of set: setCol(%i, %i, %i)\n", colCheck, numToSet, col);
           setCol(colCheck, numToSet, col);
         }
       }
       else
       {
+        printf("calling from else of set: setRow(%i, %i, 0)\n", rowCheck, numToSet);
         setRow(rowCheck, numToSet, 0);
+        printf("calling from if of set: setCol(%i, %i, 0)\n", colCheck, numToSet);
         setCol(colCheck, numToSet, 0);
       }
     }
@@ -415,22 +414,16 @@ struct Puzzle {
       int endBlockRow=startBlockRow+blockSize;
       int endBlockCol=startBlockCol+blockSize;
       
-      int row;
-      int col;
-      
-      for (int j = startBlockRow; j < endBlockRow; j++)
+      for (int j = startBlockRow, k = startBlockCol; j < endBlockRow, k < endBlockCol; j++, k++)
       {
-        std::bitset<32> row(getRow(j, numOfGrid));
-        for (int k = startBlockCol; k < endBlockCol; k++)
+        int row=getRow(j, numOfGrid);
+        int col=getCol(k, numOfGrid);
+        if (row!=0 || col!=0)
         {
-          std::bitset<32> col(getCol(k, numOfGrid));
-          if (row.any() && col.any())
-          {
-            if (row.test(k) || col.test(j))
+            if (row&(1<<(k-1))!=0 || col&(1<<(j-1))!=0)
             {
-              return false;
+                return false;
             }
-          }
         }
       }
       

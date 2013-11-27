@@ -119,8 +119,7 @@ struct CandidateList {
     }
     else
     {
-      std::bitset<32> x(conflicts);
-      return x.test(given-1);
+      return conflicts&(1<<(given-1))!=0;
     }
   }
   
@@ -129,25 +128,19 @@ struct CandidateList {
     conflicts&=~(1<<(i-1));
   }
 
-  // For Brennan
+  // Brennan
   int nextCandidate() {
     //should return the next candidate, or 0 if there are none
-    if (conflicts==0)
-    {
-      return 0;
-    }
-    else
-    {
-      if (testLevel > 1) {
-        printf("candidate list is ");
-        std::cout << toString();
-        printf(", next candidate is %i is ", __builtin_ffs(conflicts));
-        std::bitset<32> x(conflicts);
-        std::cout << x << "\n";
-      }
 
-      return __builtin_ffs(conflicts);
+    if (testLevel > 1) {
+      printf("candidate list is ");
+      std::cout << toString();
+      printf(", next candidate is %i is ", __builtin_ffs(conflicts));
+      std::bitset<32> x(conflicts);
+      std::cout << x << "\n";
     }
+
+    return __builtin_ffs(conflicts);
   }
   
   // protected unsigned int getConflictList()
