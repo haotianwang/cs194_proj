@@ -724,12 +724,13 @@ struct Puzzle {
 
       // vectorization
       
+      /*
       if (checkNeighborAssignmentsVector(x, y, current) != result) {
         printf("vector check neighbor assignments and non-vectorized version doesn't match\n");
         exit(1);
       }
+      */
       return result;
-
     }
 
     bool checkNeighborAssignmentsVector(int x, int y, int currentlyAssigned) {
