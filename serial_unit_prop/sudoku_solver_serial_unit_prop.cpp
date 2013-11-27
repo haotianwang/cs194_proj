@@ -7,8 +7,6 @@
 
 #include "sudoku_helper_serial_unit_prop.cpp"
 
-static int testLevel = 0;
-
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {
   if (testLevel > 0) printf("step 1: on (%i, %i)\n", p->getCurrentRow(), p->getCurrentCol());
@@ -27,6 +25,7 @@ bool reverseSlot(Puzzle* p) {
 
 // step 3. Returns whether assignment succeeds
 bool assignAndValidate(Puzzle* p) {
+  if (testLevel > 1) printf("pre-step 3:\n");
   if (p->assign(p->getCurrentRow(), p->getCurrentCol())) {
     if (testLevel > 0) 
       printf("step 3: on (%i, %i), assigned %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
@@ -83,6 +82,7 @@ int main(int argc, char *argv[]) {
   }
 
   int** grid = fileTo2dArray(argv[1], atoi(argv[2]));
+
   Puzzle* p = new Puzzle(grid, atoi(argv[2]));
   p->initialize();
 
@@ -114,6 +114,7 @@ int main(int argc, char *argv[]) {
 
   //int counter=10000;  
   while (!p->isSolved()) {
+    //printf("CURRENT ELEMENT IS %i\n", p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
   //while (!p->isSolved() && counter>0) {
     //counter--;
     //printf("step 1\n");

@@ -17,6 +17,8 @@ void print2dArray(int** grid, int dim);
 int* file2dArray(char* fileName, int dim);
 std::string convertInt(int number);
 
+static int testLevel = 1;
+
 struct CandidateList {
 	int* conflicts;
   int dim;
@@ -54,7 +56,7 @@ struct CandidateList {
     void changeConflict(int nums, int change) 
     {
       // correct for starting at 0
-      int val=conflicts[nums-1]
+      int val=conflicts[nums-1];
       val=val + change;
       if(val<1 && conflicts[nums-1]>0)
       {
@@ -118,6 +120,7 @@ struct Puzzle {
     }
     
     void initialize() {
+      setupVisited();
       //printf("starting initialize\n");
       setupPreassigned();
       //printf("preassigned set\n");
@@ -125,9 +128,10 @@ struct Puzzle {
       //printf("candidate lists set\n");
       currentCol = 0;
       currentRow = 0;
-      while (preassigned[currentRow][currentCol]) {
+      positionOnVisited = -1;
+      //while (preassigned[currentRow][currentCol]) {
         nextSlot();
-      }
+      //}
       //printf("slot initialized\n");
       copyCandidates(currentRow, currentCol);
       //printf("candidates copied\n");
@@ -141,13 +145,14 @@ struct Puzzle {
     void deinitialize() {
       teardownPreassigned();
       teardownCandidateLists();
+      teardownVisited();
       initialized = false;
     }
 
     void setupVisited() {
-      rowsVisited = new int[dim];
-      colsVisited = new int[dim];
-      int positionOnVisited = 0;
+      rowsVisited = new int[dim*dim];
+      colsVisited = new int[dim*dim];
+      int positionOnVisited = -1;
     }
 
     void teardownVisited() {
@@ -156,13 +161,13 @@ struct Puzzle {
     }
     
     void setupPreassigned() {
-      numUnassigned = dim;
+      numUnassigned = dim*dim;
       preassigned = new2dBoolArray(dim);
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
           if (sudoku[i][j] > 0) {
             preassigned[i][j] = true;
-            numUnassigned++;
+            numUnassigned--;
           }
           else {
             preassigned[i][j] = false;
@@ -287,7 +292,8 @@ struct Puzzle {
 
     	return true;
       */
-      if (numUnassigned == positionOnVisited) {
+      if (numUnassigned == positionOnVisited + 1) {
+        printf("next slot returning false, numUnassigned is %i and positionOnVisited is %i\n", numUnassigned, positionOnVisited);
         return false;
       }
       else {
@@ -296,7 +302,7 @@ struct Puzzle {
         int newNumCandidates = dim + dim;
         for (int row = 0; row < dim; row++) {
           for (int col = 0; col < dim; col++) {
-            if (!preassigned[row][col]) {
+            if (!preassigned[row][col] && sudoku[row][col] == -1) {
               int thisNumCandidates = numCandidates(row, col, true);
               if (thisNumCandidates < newNumCandidates) {
                 newNumCandidates = thisNumCandidates;
@@ -311,19 +317,21 @@ struct Puzzle {
           rowsVisited[positionOnVisited] = getCurrentRow();
           colsVisited[positionOnVisited] = getCurrentCol();
         }
+
         positionOnVisited++;
-        currentRow = newX;
-        currentCol = newY;
+        currentRow = newRow;
+        currentCol = newCol;
+
         return true;
       }
     }
 
     int numCandidates(int x, int y, int initList) {
-      CandidateList* list = initCandidates;
+      CandidateList* list = initCandidates[x][y];
       if (!initList) {
-        list = currentCandidates;
+        list = currentCandidates[x][y];
       }
-      return list.numCandidates();
+      return list->numCandidates();
     }
     
     
@@ -532,13 +540,17 @@ struct Puzzle {
 
     // assigns next number in currentCandidateList to x,y, returns success/failure
     bool assign(int x, int y) {
+
       int toBeAssigned = nextCandidate(x, y);
-      //printf("next candidate found to be %i\n", toBeAssigned);
+      if (testLevel > 1) printf("next candidate found to be %i\n", toBeAssigned);
       if (toBeAssigned == -1) {
         return false;
       }
       else {
+        if (testLevel > 1) printf("attempting to set %i at (%i, %i)\n", toBeAssigned, x, y);
+        if (testLevel > 1) printf("prev value at (%i, %i) is %i\n", x, y, sudoku[x][y]);
         sudoku[x][y] = toBeAssigned;
+        if (testLevel > 1) printf("successfully set %i at (%i, %i)\n", toBeAssigned, x, y);
         return true;
       }
     }
