@@ -86,6 +86,15 @@ int main(int argc, char *argv[]) {
   Puzzle* p = new Puzzle(grid, atoi(argv[2]));
   p->initialize();
 
+  /*
+  while (true) {
+    Puzzle* test = new Puzzle(grid, atoi(argv[2]));
+    test->initialize();
+    test->deinitialize();
+    delete test;
+  }
+  */
+
   /*  
   p->printGridDim();
   p->printGrid();
@@ -112,8 +121,15 @@ int main(int argc, char *argv[]) {
   p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
   */
 
+
+  int highestVisitedPosition = 0;
   //int counter=10000;  
   while (!p->isSolved()) {
+    if (highestVisitedPosition < p->positionOnVisited) {
+      printf("highestVisitedPosition is now %i\n", p->positionOnVisited);
+      highestVisitedPosition = p->positionOnVisited;
+    }
+
     //printf("CURRENT ELEMENT IS %i\n", p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
   //while (!p->isSolved() && counter>0) {
     //counter--;
