@@ -86,8 +86,11 @@ struct CandidateList {
   
   void invalidateCandidate(int i)
   {
+    if (conflicts[i-1]==0)
+    {
+      num=num-1;
+    }
     conflicts[i-1]=-1;
-    num=num-1;
   }
 
 };
