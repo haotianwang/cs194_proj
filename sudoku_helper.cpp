@@ -408,13 +408,33 @@ struct Puzzle {
     
     //takes the row number, the col number, and the number to check, 
     //and checks the number is valid to assign to this block
-    bool checkBlock(int row, int col, int numOfGrid)
+    bool checkBlock(int rowToCheck, int colToCheck, int numOfGrid)
     {     
-      int startBlockRow=(row/blockSize)*blockSize;
-      int startBlockCol=(col/blockSize)*blockSize;
+      int startBlockRow=(rowToCheck/blockSize)*blockSize;
+      int startBlockCol=(colToCheck/blockSize)*blockSize;
       int endBlockRow=startBlockRow+blockSize;
       int endBlockCol=startBlockCol+blockSize;
       
+      int row;
+      int col;
+      
+      for (int j = startBlockRow; j < endBlockRow; j++)
+      {
+        std::bitset<32> row(getRow(j, numOfGrid));
+        for (int k = startBlockCol; k < endBlockCol; k++)
+        {
+          std::bitset<32> col(getCol(k, numOfGrid));
+          if (row.any() && col.any())
+          {
+            if (row.test(k) || col.test(j))
+            {
+              return false;
+            }
+          }
+        }
+      }
+      
+      /*
       for (int j=startBlockRow, k=startBlockCol; j<endBlockRow&&k<endBlockCol; j++, k++)
       {
         if (checkRow(getRow(j, numOfGrid), numOfGrid)==false || checkCol(getCol(k, numOfGrid), numOfGrid)==false)
@@ -422,6 +442,7 @@ struct Puzzle {
           return false;
         }
       }
+      */
       return true;
     }
     
@@ -502,7 +523,7 @@ struct Puzzle {
       sudoku[x][y]=-1;
     }
 
-    void removeAndInvaldateVector(int x, int y) {
+    void removeAndInvalidateVector(int x, int y) {
       int numOfGrid = sudoku[x][y] - 1;
       set(x, y, numOfGrid, false);
     }
