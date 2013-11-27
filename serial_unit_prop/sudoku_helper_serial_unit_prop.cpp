@@ -20,6 +20,7 @@ std::string convertInt(int number);
 struct CandidateList {
 	int* conflicts;
   int dim;
+  int num;
   
   public:
     CandidateList(int inputDim) {
@@ -27,6 +28,7 @@ struct CandidateList {
     }
     
     void initialize() {
+      num=dim;
       conflicts = new int[dim];
       for (int i = 0; i < dim; i++) {
         conflicts[i] = 0;
@@ -49,10 +51,20 @@ struct CandidateList {
       return result;
     }
     
-    void changeConflict(int num, int change) {
+    void changeConflict(int nums, int change) 
+    {
       // correct for starting at 0
-      num = num - 1;
-      conflicts[num] = conflicts[num] + change;
+      int val=conflicts[nums-1]
+      val=val + change;
+      if(val<1 && conflicts[nums-1]>0)
+      {
+        num=num+1;
+      }
+      if(val>0 && conflicts[nums-1]<1)
+      {
+        num=num-1;
+      }
+      conflicts[nums-1]=val;
     }
 
    //returns if there is still a valid candidate for this slot
@@ -65,9 +77,15 @@ struct CandidateList {
 		return false;
 	}
   
+  int numCandidates()
+  {
+    return num;
+  }
+  
   void invalidateCandidate(int i)
   {
     conflicts[i-1]=-1;
+    num=num-1;
   }
 
 };
