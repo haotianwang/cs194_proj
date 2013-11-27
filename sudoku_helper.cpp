@@ -435,8 +435,8 @@ struct Puzzle {
       
       for (int j = startBlockRow, k = startBlockCol; j < endBlockRow, k < endBlockCol; j++, k++)
       {
-        int row=getRow(j, numOfGrid);
-        int col=getCol(k, numOfGrid);
+        unsigned int row=getRow(j, numOfGrid);
+        unsigned int col=getCol(k, numOfGrid);
         if (row!=0 || col!=0)
         {
           int rowOnIndex = __builtin_ffs(row) - 1;
