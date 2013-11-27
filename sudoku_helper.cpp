@@ -344,7 +344,7 @@ struct Puzzle {
     }
 
     void assertNumValid(int num) {
-      if (num < 1 || num > dim-1) {
+      if (num < 1 || num > dim) {
         printf("invalid input number: %i\n", num);
         exit(1);
       }
@@ -352,20 +352,20 @@ struct Puzzle {
 
     int getRow(int rowToGet, int numOfGrid) {
       assertNumValid(numOfGrid);
-      return sudokuVectorRows[numOfGrid][rowToGet];
+      return sudokuVectorRows[numOfGrid-1][rowToGet];
     }
     int getCol(int colToGet, int numOfGrid) {
       assertNumValid(numOfGrid);
-      return sudokuVectorCols[numOfGrid][colToGet];
+      return sudokuVectorCols[numOfGrid-1][colToGet];
     }
 
     void setRow(int rowToSet, int numOfGrid, int numToSet) {
       assertNumValid(numOfGrid);
-      sudokuVectorRows[numOfGrid][rowToSet] = numToSet;
+      sudokuVectorRows[numOfGrid-1][rowToSet] = numToSet;
     }
     void setCol(int colToSet, int numOfGrid, int numToSet) {
       assertNumValid(numOfGrid);
-      sudokuVectorCols[numOfGrid][colToSet] = numToSet;
+      sudokuVectorCols[numOfGrid-1][colToSet] = numToSet;
     }
     
     void set(int rowCheck, int colCheck, int numToSet, bool setToOn)
@@ -382,6 +382,10 @@ struct Puzzle {
           setRow(rowCheck, numToSet, row);
           printf("calling from if of set: setCol(%i, %i, %i)\n", colCheck, numToSet, col);
           setCol(colCheck, numToSet, col);
+        }
+        else {
+          printf("trying to set %i to row %i and col %i, when another row/col/block element is already set to that\n", numToSet, rowCheck, colCheck);
+          exit(1);
         }
       }
       else
@@ -420,10 +424,13 @@ struct Puzzle {
         int col=getCol(k, numOfGrid);
         if (row!=0 || col!=0)
         {
-            if (row&(1<<(k-1))!=0 || col&(1<<(j-1))!=0)
-            {
-                return false;
-            }
+          int rowOnIndex = __builtin_ffs(row) - 1;
+          int colOnIndex = __builtin_ffs(col) - 1;
+
+          if ((rowOnIndex>=startBlockRow && rowOnIndex<=endBlockRow) && (colOnIndex>=startBlockCol && colOnIndex<=endBlockCol))
+          {
+            return false;
+          }
         }
       }
       
@@ -518,7 +525,9 @@ struct Puzzle {
 
     void removeAndInvalidateVector(int x, int y) {
       int numOfGrid = sudoku[x][y] - 1;
-      set(x, y, numOfGrid, false);
+      if (numOfGrid > 0 && numOfGrid < dim + 1) {
+        set(x, y, numOfGrid, false);
+      }
     }
     
     //the conflicts count of x, y, number i's conflicts gets incremented by delta
@@ -665,8 +674,8 @@ struct Puzzle {
       return (currentIndex / blockSize) * blockSize;
     }
     
-    bool checkNeighborAssignments(int x, int y) {
-      int current = sudoku[x][y];
+    bool checkNeighborAssignments(int x, int y, int currentlyAssigned) {
+      int current = currentlyAssigned;
       bool result;
     
       for (int i = 0; i < dim; i++) {
@@ -696,15 +705,15 @@ struct Puzzle {
       result = true;
 
       // vectorization
-      if (checkNeighborAssignmentsVector(x, y) != result) {
+      if (checkNeighborAssignmentsVector(x, y, current) != result) {
         printf("vector check neighbor assignments and non-vectorized version doesn't match\n");
         exit(1);
       }
       return result;
     }
 
-    bool checkNeighborAssignmentsVector(int x, int y) {
-      int numToCheck = getCurrentAssigned(x, y);
+    bool checkNeighborAssignmentsVector(int x, int y, int currentlyAssigned) {
+      int numToCheck = currentlyAssigned;
       return checkRow(x, numToCheck) && checkCol(y, numToCheck) && checkBlock(x, y, numToCheck);
     }
     

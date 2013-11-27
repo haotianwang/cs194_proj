@@ -23,6 +23,7 @@ bool reverseSlot(Puzzle* p) {
 }
 
 
+/*
 // step 3. Returns whether assignment succeeds
 bool assignAndValidate(Puzzle* p) {
   if (p->assign(p->getCurrentRow(), p->getCurrentCol())) {
@@ -37,13 +38,14 @@ bool assignAndValidate(Puzzle* p) {
     //printf("post-assign candidate list: \n"); 
     //p->printInitCandidates();    
     //printf("step 3: updateNeighborConflicts succeeded\n");
-    return p->checkNeighborAssignments(p->getCurrentRow(), p->getCurrentCol());
+    return p->checkNeighborAssignments(p->getCurrentRow(), p->getCurrentCol(), );
   }
   else {
     printf("error: reached slot with no candidates. shouldn't happen. exiting.\n");
     exit(1);
   }
 }
+*/
 
 
 // step 4
@@ -125,23 +127,31 @@ int main(int argc, char *argv[]) {
       //printf("step 3\n");
       // step 3
       bool succeeded;
-      if (p.assign(p.getCurrentRow(), p.getCurrentCol())) {
-        if (testLevel > 0) 
+      int nextCandidate = p.nextCandidate(p.getCurrentRow(), p.getCurrentCol());
+
+      if (p.checkNeighborAssignments(p.getCurrentRow(), p.getCurrentCol(), nextCandidate)) {
+        if (p.assign(p.getCurrentRow(), p.getCurrentCol())) {
+          if (testLevel > 0) 
           printf("step 3: on (%i, %i), assigned %i\n", p.getCurrentRow(), p.getCurrentCol(), p.getCurrentAssigned(p.getCurrentRow(), p.getCurrentCol()));
-        //printf("step 3: assignment succeeded\n");
-        //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
-        //printf("pre-assign candidate list: \n"); 
-        //p->printInitCandidates();
-        // deprecated
-        //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
-        //printf("post-assign candidate list: \n"); 
-        //p->printInitCandidates();    
-        //printf("step 3: updateNeighborConflicts succeeded\n");
-        succeeded = p.checkNeighborAssignments(p.getCurrentRow(), p.getCurrentCol());
+          //printf("step 3: assignment succeeded\n");
+          //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
+          //printf("pre-assign candidate list: \n"); 
+          //p->printInitCandidates();
+          // deprecated
+          //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
+          //printf("post-assign candidate list: \n"); 
+          //p->printInitCandidates();    
+          //printf("step 3: updateNeighborConflicts succeeded\n");
+          //succeeded = p.checkNeighborAssignments(p.getCurrentRow(), p.getCurrentCol(), nextCandidate);
+          succeeded = true;
+        }
+        else {
+          printf("error: reached slot with no candidates. shouldn't happen. exiting.\n");
+          exit(1);
+        }
       }
-      else {
-        printf("error: reached slot with no candidates. shouldn't happen. exiting.\n");
-        exit(1);
+      else  {
+        succeeded = false;
       }
 
       if (succeeded) {
