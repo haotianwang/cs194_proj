@@ -568,9 +568,9 @@ struct Puzzle {
     }
 
     bool isSolved() {
-      if (currentRow != dim - 1 || currentCol != dim - 1) {
-        return false;
-      }
+      // if (currentRow != dim - 1 || currentCol != dim - 1) {
+        // return false;
+      // }
       
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
@@ -581,9 +581,9 @@ struct Puzzle {
         }
       }
       
-      if (getCurrentAssigned(dim-1, dim-1) < 1) {
-        return false;
-      }
+      // if (getCurrentAssigned(dim-1, dim-1) < 1) {
+        // return false;
+      // }
       
       return true;
     }

@@ -125,11 +125,12 @@ int main(int argc, char *argv[]) {
   int highestVisitedPosition = 0;
   //int counter=10000;  
   while (!p->isSolved()) {
+/*
     if (highestVisitedPosition < p->positionOnVisited) {
       printf("highestVisitedPosition is now %i\n", p->positionOnVisited);
       highestVisitedPosition = p->positionOnVisited;
     }
-
+*/
     //printf("CURRENT ELEMENT IS %i\n", p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
   //while (!p->isSolved() && counter>0) {
     //counter--;
