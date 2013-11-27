@@ -84,12 +84,11 @@ struct CandidateList {
       {
         if(checkCandidate(i))
         {
-          result.append(convertInt(i));
-
-          if (i+1<=dim) 
+          if (i+1<=dim && dim>1) 
           {
             result.append(",");
           }
+          result.append(convertInt(i));
         }
       }
       result.append("]");
@@ -138,8 +137,8 @@ struct CandidateList {
       printf("candidate list is ");
       std::cout << toString();
       printf(", next candidate is %i is ", __builtin_ffs(conflicts));
-      std::bitset<32> x(conflicts);
-      std::cout << x << "\n";
+      printBinary(conflicts);
+      printf("\n");
     }
 
     return __builtin_ffs(conflicts);
@@ -396,7 +395,9 @@ struct Puzzle {
 
           if (testLevel > 1) {
             printBinary(row);
+            printf("\n");
             printBinary(col);
+            printf("\n");
           }
 
           row|=1<<(colCheck);
@@ -404,11 +405,13 @@ struct Puzzle {
           if (testLevel > 1) {
             printf("calling from if of set: setRow(%i, %i, ", rowCheck, numToSet);
             printBinary(row);
+            printf(")\n");
           }
           setRow(rowCheck, numToSet, row);
           if (testLevel > 1) {
             printf("calling from if of set: setCol(%i, %i, ", colCheck, numToSet);
             printBinary(col);
+            printf(")\n");
           }
           setCol(colCheck, numToSet, col);
         }
@@ -430,7 +433,7 @@ struct Puzzle {
 
     void printBinary(unsigned int num) {
           std::bitset<32> y(num);
-          std::cout << y << ")\n";
+          std::cout << y <<;
     }
     
     //takes the row number and the number to check, returns if it is valid to assign in this row
