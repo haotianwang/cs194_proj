@@ -530,7 +530,7 @@ struct Puzzle {
       return sudoku[x][y];
     }
     
-    void removeAndInvalidate(int x, int y) //Brennan
+    void removeAndInvalidate(int x, int y, int numToInvalidate) //Brennan
     {
       currentCandidates[x][y]->invalidateCandidate(sudoku[x][y]);
       //vectorization
@@ -691,7 +691,7 @@ struct Puzzle {
     
     bool checkNeighborAssignments(int x, int y, int currentlyAssigned) {
       int current = currentlyAssigned;
-      bool result;
+      bool result = true;
     
       for (int i = 0; i < dim; i++) {
         if (sudoku[x][i] == current && i != y) {
@@ -719,17 +719,13 @@ struct Puzzle {
           }
         }
       }
-      
-      result = true;
 
       // vectorization
-      
-      /*
       if (checkNeighborAssignmentsVector(x, y, current) != result) {
         printf("vector check neighbor assignments and non-vectorized version doesn't match\n");
         exit(1);
       }
-      */
+      
       return result;
     }
 

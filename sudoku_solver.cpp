@@ -47,7 +47,7 @@ bool assignAndValidate(Puzzle* p) {
 }
 */
 
-
+/*
 // step 4
 void backtrack(Puzzle* p) {
   if (testLevel > 0) 
@@ -61,6 +61,7 @@ void backtrack(Puzzle* p) {
   p->removeAndInvalidate(p->getCurrentRow(), p->getCurrentCol());
   // loops back to front
 }
+*/
 
 
 // step 5
@@ -172,7 +173,7 @@ int main(int argc, char *argv[]) {
         //p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
         //printf("post-update candidate list: \n"); 
         //p->printInitCandidates();
-        p.removeAndInvalidate(p.getCurrentRow(), p.getCurrentCol());
+        p.removeAndInvalidate(p.getCurrentRow(), p.getCurrentCol(), nextCandidate);
         // loops back to front
       }
     }
