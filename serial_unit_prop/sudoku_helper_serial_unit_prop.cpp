@@ -569,7 +569,7 @@ struct Puzzle {
     }
 
     bool isSolved() {
-      if (positionOnVisited != numUnassigned - 1) {
+      if (currentRow != dim - 1 || currentCol != dim - 1) {
         return false;
       }
       
