@@ -8,7 +8,7 @@
 #include <math.h>
 #include <bitset>
 
-static int testLevel = 0;
+static int testLevel = 2;
 
 void delete2dIntArray(int** array, int dim);
 void delete2dBoolArray(bool** array, int dim);
