@@ -77,6 +77,11 @@ struct Puzzle {
   int** sudoku;
   int dim;
   bool initialized;
+
+  int* rowsVisited;
+  int* colsVisited;
+  int positionOnVisited;
+  int numUnassigned;
   
   // need to initialize this
   int currentRow;
@@ -108,6 +113,9 @@ struct Puzzle {
       //printf("slot initialized\n");
       copyCandidates(currentRow, currentCol);
       //printf("candidates copied\n");
+
+
+
       initialized = true;
       //printf("initialized\n");
     }
@@ -117,13 +125,26 @@ struct Puzzle {
       teardownCandidateLists();
       initialized = false;
     }
+
+    void setupVisited() {
+      rowsVisited = new int[dim];
+      colsVisited = new int[dim];
+      int positionOnVisited = 0;
+    }
+
+    void teardownVisited() {
+      delete rowsVisited;
+      delete colsVisited;
+    }
     
     void setupPreassigned() {
+      numUnassigned = dim;
       preassigned = new2dBoolArray(dim);
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
           if (sudoku[i][j] > 0) {
             preassigned[i][j] = true;
+            numUnassigned++;
           }
           else {
             preassigned[i][j] = false;
@@ -223,6 +244,7 @@ struct Puzzle {
     
     bool nextSlot() //Brennan
     {
+      /*
     	if (currentCol==dim-1)
     	{
     		if (currentRow!=dim-1)
@@ -246,11 +268,50 @@ struct Puzzle {
     	}
 
     	return true;
+      */
+      if (numUnassigned == positionOnVisited) {
+        return false;
+      }
+      else {
+        int newRow = 0;
+        int newCol = 0;
+        int newNumCandidates = dim + dim;
+        for (int row = 0; row < dim; row++) {
+          for (int col = 0; col < dim; col++) {
+            if (!preassigned[row][col]) {
+              int thisNumCandidates = numCandidates(row, col, true);
+              if (thisNumCandidates < newNumCandidates) {
+                newNumCandidates = thisNumCandidates;
+                newRow = row;
+                newCol = col;
+              }
+            }
+          }
+        }
+
+        if (positionOnVisited >= 0) {
+          rowsVisited[positionOnVisited] = getCurrentRow();
+          colsVisited[positionOnVisited] = getCurrentCol();
+        }
+        positionOnVisited++;
+        currentRow = newX;
+        currentCol = newY;
+        return true;
+      }
+    }
+
+    int numCandidates(int x, int y, int initList) {
+      CandidateList* list = initCandidates;
+      if (!initList) {
+        list = currentCandidates;
+      }
+      return list.numCandidates();
     }
     
     
     bool prevSlot() //Brennan
     {
+      /*
     	if (currentCol==0)
     	{
 			  if (currentRow!=0)
@@ -274,6 +335,16 @@ struct Puzzle {
     	}
 
     	return true;
+      */
+      if (positionOnVisited < 1) {
+        return false;
+      }
+      else {
+        positionOnVisited--;
+        currentRow = rowsVisited[positionOnVisited];
+        currentCol = colsVisited[positionOnVisited];
+        return true;
+      }
     }
     
     
