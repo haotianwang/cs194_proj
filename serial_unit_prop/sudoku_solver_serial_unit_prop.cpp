@@ -86,14 +86,14 @@ int main(int argc, char *argv[]) {
   Puzzle* p = new Puzzle(grid, atoi(argv[2]));
   p->initialize();
 
-  /*
-  while (true) {
+  
+  for (int i = 0; i < 5; i++) {
     Puzzle* test = new Puzzle(grid, atoi(argv[2]));
     test->initialize();
     test->deinitialize();
     delete test;
   }
-  */
+  
 
   /*  
   p->printGridDim();
@@ -179,6 +179,7 @@ int main(int argc, char *argv[]) {
   //printf("deinitialized\n");
   delete2dIntArray(grid, atoi(argv[2]));
   //printf("deleted original array.\n");
+  delete p;
 
   //timer
   double seconds_since_start = difftime( time(0), startTime);

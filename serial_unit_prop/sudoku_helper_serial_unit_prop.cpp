@@ -38,7 +38,7 @@ struct CandidateList {
     }
     
     void deinitialize() {
-      delete conflicts;
+      delete[] conflicts;
     }
     
     std::string toString() {
@@ -159,8 +159,8 @@ struct Puzzle {
     }
 
     void teardownVisited() {
-      delete rowsVisited;
-      delete colsVisited;
+      delete[] rowsVisited;
+      delete[] colsVisited;
     }
     
     void setupPreassigned() {
@@ -211,11 +211,15 @@ struct Puzzle {
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
           initCandidates[i][j]->deinitialize();
+          currentCandidates[i][j]->deinitialize();
           delete initCandidates[i][j];
+          delete currentCandidates[i][j];
         }
-        delete initCandidates[i];
+        delete[] initCandidates[i];
+        delete[] currentCandidates[i];
       }
-      delete initCandidates;
+      delete[] initCandidates;
+      delete[] currentCandidates;
     }
     
     void printGridDim() {
@@ -642,16 +646,16 @@ void print2dArray(int** grid, int dim) {
 
 void delete2dIntArray(int** grid, int dim) {
   for (int i = 0; i < dim; i++) {
-    delete grid[i];
+    delete[] grid[i];
   }
-  delete grid;
+  delete[] grid;
 }
 
 void delete2dBoolArray(bool** grid, int dim) {
   for (int i = 0; i < dim; i++) {
-    delete grid[i];
+    delete[] grid[i];
   }
-  delete grid;
+  delete[] grid;
 }
 
 std::string convertInt(int number)
