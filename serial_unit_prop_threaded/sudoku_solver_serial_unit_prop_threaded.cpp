@@ -109,6 +109,30 @@ bool solveInitializedPuzzle(Puzzle* p, int highestVisitedPosition) {
   return p->isSolved();
 }
 
+Puzzle* solveInitializedPuzzles(std::vector<Puzzle*>* toSolve, int highestVisitedPosition) {
+  Puzzle* p = NULL;
+  #pragma omp parallel for
+  for (int i = toSolve->size()-1; i >= 0; i--) {
+    printf("puzzle to solve:\n");
+    toSolve->at(i)->printGrid();
+    if (solveInitializedPuzzle(toSolve->at(i), highestVisitedPosition)) {
+      #pragma omp critical 
+      {
+        if (p == NULL) {
+          printf("solved!\n");
+          p = toSolve->at(i);
+        }
+      }
+    }
+    else {
+      printf("led to dead end\n");
+      toSolve->at(i)->deinitialize();
+      delete toSolve->at(i);
+    }
+  }
+  return p;
+}
+
 
 int main(int argc, char *argv[]) {
   // timer
@@ -250,29 +274,11 @@ int main(int argc, char *argv[]) {
 
   printf("number of branches: %i\n", toSolve.size());
 
-  #pragma omp parallel for
-  for (int i = toSolve.size()-1; i >= 0; i--) {
-    printf("puzzle to solve:\n");
-    toSolve.at(i)->printGrid();
-    if (solveInitializedPuzzle(toSolve.at(i), highestVisitedPosition)) {
-      #pragma omp critical 
-      {
-        if (p == NULL) {
-          printf("solved!\n");
-          p = toSolve.at(i);
-        }
-      }
-    }
-    else {
-      printf("led to dead end\n");
-      toSolve.at(i)->deinitialize();
-      delete toSolve.at(i);
-    }
-  }
+  p = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
 
   printf("parallel start depth was %i\n", parallelStartDepth);
   
-  if (p->isSolved()) {
+  if (p != NULL && p->isSolved()) {
     printf("solution found!\n");
     p->printGrid();
   }
