@@ -86,14 +86,25 @@ int main(int argc, char *argv[]) {
   Puzzle* p = new Puzzle(grid, atoi(argv[2]));
   p->initialize();
 
+  int dim = atoi(argv[2]);
+
   
   for (int i = 0; i < 5; i++) {
-    Puzzle* test = new Puzzle(grid, atoi(argv[2]));
+    int** gridCopy = new2dIntArray(dim);
+    copy2dIntArray(grid, gridCopy, dim);
+
+    Puzzle* test = new Puzzle(gridCopy, dim);
     test->initialize();
+
+    
+    Puzzle* testCopy = test->makePreassignedCopy();
+    testCopy->deinitialize();
+    delete testCopy;
+    
+    
     test->deinitialize();
     delete test;
   }
-  
 
   /*  
   p->printGridDim();
@@ -123,18 +134,17 @@ int main(int argc, char *argv[]) {
 
 
   int highestVisitedPosition = 0;
-  //int counter=10000;  
+  int currentDepth = 0;
+  int parallelStartDepth = 0;
+  //int counter=10000; 
+
+
   while (!p->isSolved()) {
-/*
-    if (highestVisitedPosition < p->positionOnVisited) {
+
+    if (testLevel > 1 && highestVisitedPosition < p->positionOnVisited) {
       printf("highestVisitedPosition is now %i\n", p->positionOnVisited);
       highestVisitedPosition = p->positionOnVisited;
     }
-*/
-    //printf("CURRENT ELEMENT IS %i\n", p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
-  //while (!p->isSolved() && counter>0) {
-    //counter--;
-    //printf("step 1\n");
     // step 1
     if (checkCurrentCandidates(p)) {
       //printf("step 3\n");
@@ -144,6 +154,7 @@ int main(int argc, char *argv[]) {
         //printf("step 5\n");
         // step 5
         advanceSlot(p);
+        currentDepth++;
       }
       else {
         //printf("step 4\n");
@@ -155,6 +166,7 @@ int main(int argc, char *argv[]) {
       //printf("step 2\n");
       // step 2
       if (reverseSlot(p)) {
+        currentDepth--;
         //printf("step 4\n");
         // step 4
         backtrack(p);
@@ -165,6 +177,10 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+
+
+
+
   
   if (p->isSolved()) {
     printf("solution found!\n");
@@ -178,8 +194,6 @@ int main(int argc, char *argv[]) {
   //printf("deinitializing\n");
   p->deinitialize();
   //printf("deinitialized\n");
-  delete2dIntArray(grid, atoi(argv[2]));
-  //printf("deleted original array.\n");
   delete p;
 
   //timer

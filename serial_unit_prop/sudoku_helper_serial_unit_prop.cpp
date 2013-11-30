@@ -15,6 +15,7 @@ bool** new2dBoolArray(int dim);
 bool*** mallocEmpty3dBoolArray(int dim); 
 void print2dArray(int** grid, int dim);
 int* file2dArray(char* fileName, int dim);
+void copy2dIntArray(int** source, int** destination, int dim);
 std::string convertInt(int number);
 
 static int testLevel = 0;
@@ -27,6 +28,12 @@ struct CandidateList {
   public:
     CandidateList(int inputDim) {
       dim = inputDim;
+    }
+
+    void copyFrom(CandidateList source) {
+      size_t size = sizeof(conflicts)/sizeof(conflicts[0]);
+      memcpy(conflicts, source.conflicts, size);
+      num = source.num;
     }
     
     void initialize() {
@@ -121,12 +128,35 @@ struct Puzzle {
       blockSize = (int) sqrt ((float) dim);
       initialized = false;
     }
+
+    Puzzle* makePreassignedCopy() {
+      int** newSudoku = new2dIntArray(dim);
+      copy2dIntArray(sudoku, newSudoku, dim);
+      Puzzle* result = new Puzzle(newSudoku, dim);
+      result->setupPreassigned();
+      result->setupVisited();
+      result->createCandidateLists();
+      for (int i = 0; i < dim; i++) {
+        for (int j = 0; j < dim; j++) {
+          result->initCandidates[i][j]->copyFrom(*initCandidates[i][j]);
+        }
+      }
+      result->currentRow = currentRow;
+      result->currentCol = currentCol;
+
+      result->currentCandidates[currentRow][currentCol]->copyFrom(*currentCandidates[currentRow][currentCol]);
+
+      result->positionOnVisited = 0;
+      result->initialized = true;
+
+      return result;
+    }
     
     void initialize() {
-      setupVisited();
       //printf("starting initialize\n");
       setupPreassigned();
       //printf("preassigned set\n");
+      setupVisited();
       setupCandidateLists();
       //printf("candidate lists set\n");
       currentCol = 0;
@@ -149,18 +179,23 @@ struct Puzzle {
       teardownPreassigned();
       teardownCandidateLists();
       teardownVisited();
+      teardownSudoku();
       initialized = false;
     }
 
     void setupVisited() {
-      rowsVisited = new int[dim*dim];
-      colsVisited = new int[dim*dim];
+      rowsVisited = new int[numUnassigned+1];
+      colsVisited = new int[numUnassigned+1];
       int positionOnVisited = -1;
     }
 
     void teardownVisited() {
       delete[] rowsVisited;
       delete[] colsVisited;
+    }
+
+    void teardownSudoku() {
+      delete2dIntArray(sudoku, dim);
     }
     
     void setupPreassigned() {
@@ -179,12 +214,12 @@ struct Puzzle {
       }
     }
     
-    void setupCandidateLists() {
+    void createCandidateLists() {
       initCandidates = new CandidateList**[dim];
       currentCandidates = new CandidateList**[dim];
       for (int i = 0; i < dim; i++) {
         initCandidates[i] = new CandidateList*[dim];
-	      currentCandidates[i] = new CandidateList*[dim];
+        currentCandidates[i] = new CandidateList*[dim];
         for (int j = 0; j < dim; j++) {
           initCandidates[i][j] = new CandidateList(dim);
           initCandidates[i][j]->initialize();
@@ -192,7 +227,10 @@ struct Puzzle {
           currentCandidates[i][j]->initialize();
         }
       }
-      
+    }
+
+    void setupCandidateLists() {
+      createCandidateLists();
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
           int element = sudoku[i][j];
@@ -665,4 +703,12 @@ std::string convertInt(int number)
    std::stringstream ss;//create a stringstream
    ss << number;//add number to the stream
    return ss.str();//return a string with the contents of the stream
+}
+
+void copy2dIntArray(int** source, int** destination, int dim) {
+  size_t rowSize = dim*sizeof(int);
+  printf("size for coopy2dIntArray for dim of %i is %i\n", dim, rowSize);
+  for (int i = 0; i < dim; i++) {
+    memcpy(destination[i], source[i], rowSize);
+  }
 }
