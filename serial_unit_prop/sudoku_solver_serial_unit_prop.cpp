@@ -86,26 +86,6 @@ int main(int argc, char *argv[]) {
   Puzzle* p = new Puzzle(grid, atoi(argv[2]));
   p->initialize();
 
-  int dim = atoi(argv[2]);
-
-  
-  for (int i = 0; i < 5; i++) {
-    int** gridCopy = new2dIntArray(dim);
-    copy2dIntArray(grid, gridCopy, dim);
-
-    Puzzle* test = new Puzzle(gridCopy, dim);
-    test->initialize();
-
-    
-    Puzzle* testCopy = test->makePreassignedCopy();
-    testCopy->deinitialize();
-    delete testCopy;
-    
-    
-    test->deinitialize();
-    delete test;
-  }
-
   /*  
   p->printGridDim();
   p->printGrid();

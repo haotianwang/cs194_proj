@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 
   int highestVisitedPosition = 0;
   int currentDepth = 0;
-  int parallelStartDepth = 1;
+  int parallelStartDepth = 3;
   //int counter=10000;
   std::vector<Puzzle*> toSolve;
 
@@ -191,6 +191,13 @@ int main(int argc, char *argv[]) {
     // step 1
     if (currentDepth >= parallelStartDepth && checkCurrentCandidates(p)) {
       Puzzle* forSolving = p->makePreassignedCopy();
+
+      if (testLevel > 1) {
+        printf("making copy: old candidates are\n");
+        p->printInitCandidates();
+        printf("new candidates are\n");
+        forSolving->printInitCandidates();
+      }
       toSolve.push_back(forSolving);
       if (reverseSlot(p)) {
         currentDepth--;
@@ -237,6 +244,7 @@ int main(int argc, char *argv[]) {
   //printf("deinitialized\n");
   delete p;
 
+  printf("number of branches: %i\n", toSolve.size());
   for (int i = toSolve.size()-1; i >= 0; i--) {
     printf("puzzle to solve:\n");
     toSolve.at(i)->printGrid();
@@ -249,6 +257,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  printf("parallel start depth was %i\n", parallelStartDepth);
   
   if (p->isSolved()) {
     printf("solution found!\n");

@@ -31,7 +31,7 @@ struct CandidateList {
     }
 
     void copyFrom(CandidateList source) {
-      size_t size = sizeof(conflicts)/sizeof(conflicts[0]);
+      size_t size = dim*sizeof(int);
       memcpy(conflicts, source.conflicts, size);
       num = source.num;
     }
@@ -707,7 +707,6 @@ std::string convertInt(int number)
 
 void copy2dIntArray(int** source, int** destination, int dim) {
   size_t rowSize = dim*sizeof(int);
-  printf("size for coopy2dIntArray for dim of %i is %i\n", dim, rowSize);
   for (int i = 0; i < dim; i++) {
     memcpy(destination[i], source[i], rowSize);
   }
