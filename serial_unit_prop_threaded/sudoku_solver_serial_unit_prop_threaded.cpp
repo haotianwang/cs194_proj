@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
 
   int highestVisitedPosition = 0;
   int currentDepth = 0;
-  int parallelStartDepth = 3;
+  int parallelStartDepth = 1;
   //int counter=10000;
   std::vector<Puzzle*> toSolve;
 
@@ -199,6 +199,9 @@ int main(int argc, char *argv[]) {
         forSolving->printInitCandidates();
       }
       toSolve.push_back(forSolving);
+
+      printf("toSolve size: %i\n", toSolve.size());
+
       if (reverseSlot(p)) {
         currentDepth--;
         backtrack(p);
@@ -243,15 +246,25 @@ int main(int argc, char *argv[]) {
   p->deinitialize();
   //printf("deinitialized\n");
   delete p;
+  p = NULL;
 
   printf("number of branches: %i\n", toSolve.size());
+
+  #pragma omp parallel for
   for (int i = toSolve.size()-1; i >= 0; i--) {
     printf("puzzle to solve:\n");
     toSolve.at(i)->printGrid();
     if (solveInitializedPuzzle(toSolve.at(i), highestVisitedPosition)) {
-      p = toSolve.at(i);
+      #pragma omp critical 
+      {
+        if (p == NULL) {
+          printf("solved!\n");
+          p = toSolve.at(i);
+        }
+      }
     }
     else {
+      printf("led to dead end\n");
       toSolve.at(i)->deinitialize();
       delete toSolve.at(i);
     }
