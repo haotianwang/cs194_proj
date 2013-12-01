@@ -477,7 +477,6 @@ struct Puzzle {
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
     // to i. update initial candidate lists
     void updateNeighborConflicts(int x, int y, int i, bool addConflict) {
-<<<<<<< HEAD
       int index=0;
       for (index; index < dim-4; index+=4) 
       {
@@ -485,86 +484,6 @@ struct Puzzle {
         {
           if (addConflict) 
           {
-=======
-      int index;
-      for (index = 0; index < dim; index+=4) {
-        if (!preassigned[x][index]) {
-          if (addConflict) {
-            incrConflict(x, index, i, true);
-          }
-          else {
-            decrConflict(x, index, i, true);
-          }
-        }
-        
-        if (!preassigned[x][index+1]) {
-          if (addConflict) {
-            incrConflict(x, index+1, i, true);
-          }
-          else {
-            decrConflict(x, index+1, i, true);
-          }
-        }
-        
-        if (!preassigned[x][index+2]) {
-          if (addConflict) {
-            incrConflict(x, index+2, i, true);
-          }
-          else {
-            decrConflict(x, index+2, i, true);
-          }
-        }
-
-        if (!preassigned[x][index+3]) {
-          if (addConflict) {
-            incrConflict(x, index+3, i, true);
-          }
-          else {
-            decrConflict(x, index+3, i, true);
-          }
-        }
-                                
-        if (!preassigned[index][y]) {
-          if (addConflict) {
-            incrConflict(index, y, i, true);
-          }
-          else {
-            decrConflict(index, y, i, true);        
-          }
-        }
-                                
-        if (!preassigned[index+1][y]) {
-          if (addConflict) {
-            incrConflict(index+1, y, i, true);
-          }
-          else {
-            decrConflict(index+1, y, i, true);        
-          }
-        }
-        
-        if (!preassigned[index+2][y]) {
-          if (addConflict) {
-            incrConflict(index+2, y, i, true);
-          }
-          else {
-            decrConflict(index+2, y, i, true);        
-          }
-        }
-        
-        if (!preassigned[index+3][y]) {
-          if (addConflict) {
-            incrConflict(index+3, y, i, true);
-          }
-          else {
-            decrConflict(index+3, y, i, true);        
-          }
-        }        
-      }
-      
-      for (index; index < dim; index++) {
-        if (!preassigned[x][index]) {
-          if (addConflict) {
->>>>>>> 1ca3354375b2b115f30eba04bc460419ba911091
             incrConflict(x, index, i, true);
           }
           else 
