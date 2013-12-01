@@ -201,12 +201,11 @@ int main(int argc, char *argv[]) {
 
   int highestVisitedPosition = 0;
   int currentDepth = 0;
-  int parallelStartDepth = 1;
-  int vectorSizeLimit = 1;
+  int parallelStartDepth = 2;
+  int vectorSizeLimit = 100;
   //int counter=10000;
   std::vector<Puzzle*> toSolve;
   Puzzle* solved = NULL;
-
 
   while (!p->isSolved()) {
 
@@ -236,7 +235,7 @@ int main(int argc, char *argv[]) {
         break;
       }
 
-      if (toSolve.size() > vectorSizeLimit) {
+      if (toSolve.size() >= vectorSizeLimit) {
         printf("toSolve reached %i elements, attempting solve now\n", vectorSizeLimit);
         solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
         if (solved != NULL) {
