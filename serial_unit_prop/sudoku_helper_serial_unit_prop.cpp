@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <math.h>
+#include <omp.h>
 
 void delete2dIntArray(int** array, int dim);
 void delete2dBoolArray(bool** array, int dim);
@@ -474,7 +475,82 @@ struct Puzzle {
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
     // to i. update initial candidate lists
     void updateNeighborConflicts(int x, int y, int i, bool addConflict) {
-      for (int index = 0; index < dim; index++) {
+      int index;
+      for (index = 0; index < dim; index+=4) {
+        if (!preassigned[x][index]) {
+          if (addConflict) {
+            incrConflict(x, index, i, true);
+          }
+          else {
+            decrConflict(x, index, i, true);
+          }
+        }
+        
+        if (!preassigned[x][index+1]) {
+          if (addConflict) {
+            incrConflict(x, index+1, i, true);
+          }
+          else {
+            decrConflict(x, index+1, i, true);
+          }
+        }
+        
+        if (!preassigned[x][index+2]) {
+          if (addConflict) {
+            incrConflict(x, index+2, i, true);
+          }
+          else {
+            decrConflict(x, index+2, i, true);
+          }
+        }
+
+        if (!preassigned[x][index+3]) {
+          if (addConflict) {
+            incrConflict(x, index+3, i, true);
+          }
+          else {
+            decrConflict(x, index+3, i, true);
+          }
+        }
+                                
+        if (!preassigned[index][y]) {
+          if (addConflict) {
+            incrConflict(index, y, i, true);
+          }
+          else {
+            decrConflict(index, y, i, true);        
+          }
+        }
+                                
+        if (!preassigned[index+1][y]) {
+          if (addConflict) {
+            incrConflict(index+1, y, i, true);
+          }
+          else {
+            decrConflict(index+1, y, i, true);        
+          }
+        }
+        
+        if (!preassigned[index+2][y]) {
+          if (addConflict) {
+            incrConflict(index+2, y, i, true);
+          }
+          else {
+            decrConflict(index+2, y, i, true);        
+          }
+        }
+        
+        if (!preassigned[index+3][y]) {
+          if (addConflict) {
+            incrConflict(index+3, y, i, true);
+          }
+          else {
+            decrConflict(index+3, y, i, true);        
+          }
+        }        
+      }
+      
+      for (index; index < dim; index++) {
         if (!preassigned[x][index]) {
           if (addConflict) {
             incrConflict(x, index, i, true);
@@ -707,7 +783,7 @@ std::string convertInt(int number)
 
 void copy2dIntArray(int** source, int** destination, int dim) {
   size_t rowSize = dim*sizeof(int);
-  printf("size for coopy2dIntArray for dim of %i is %i\n", dim, rowSize);
+  printf("size for coopy2dIntArray for dim of %i is %i\n", dim, (int)rowSize);
   for (int i = 0; i < dim; i++) {
     memcpy(destination[i], source[i], rowSize);
   }
