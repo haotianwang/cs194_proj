@@ -25,6 +25,7 @@ struct CandidateList {
 	int* conflicts;
   int dim;
   int num;
+  bool init;
   
   public:
     CandidateList(int inputDim) {
@@ -37,10 +38,18 @@ struct CandidateList {
       num = source.num;
     }
     
-    void initialize() {
+    void initialize(bool initial) {
       num=dim;
+      init=initial;
       conflicts = new int[dim];
-      for (int i = 0; i < dim; i++) {
+      int i=0;
+      for (i; i < dim-4; i+=4) {
+        conflicts[i] = 0;
+        conflicts[i+1] = 0;
+        conflicts[i+2] = 0;
+        conflicts[i+3] = 0;
+      }
+      for (i; i < dim; i++) {
         conflicts[i] = 0;
       }
     }
@@ -66,11 +75,11 @@ struct CandidateList {
       // correct for starting at 0
       int val=conflicts[nums-1];
       val=val + change;
-      if(val<1 && conflicts[nums-1]>0)
+      if(conflicts[nums-1]>0 && val==0)
       {
         num=num+1;
       }
-      if(val>0 && conflicts[nums-1]<1)
+      if(conflicts[nums-1]<1 && val>0)
       {
         num=num-1;
       }
@@ -80,9 +89,25 @@ struct CandidateList {
    //returns if there is still a valid candidate for this slot
     bool checkCandidates() //Brennan
 	{
-		// if (num>0) return true;
-    // if (num<=0) return false;
-    for (int i = 0; i<dim; i++)
+    // if (num>0 && !init)
+    // {
+      // printf("valid num candidates: num=%i\n", num);    
+      // return true;
+    // }
+    // else
+    // {
+      // printf("RETURNED FALSE\n");
+      // return false;
+    // }
+    int i=0;
+    for (i; i<dim-4; i+=4)
+		{
+			if (conflicts[i]==0) return true;
+      if (conflicts[i+1]==0) return true;
+      if (conflicts[i+2]==0) return true;
+      if (conflicts[i+3]==0) return true;
+		}
+    for (i; i<dim; i++)
 		{
 			if (conflicts[i]==0) return true;
 		}
@@ -139,8 +164,18 @@ struct Puzzle {
       result->setupPreassigned();
       result->setupVisited();
       result->createCandidateLists();
-      for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
+      int j;
+      for (int i = 0; i < dim; i++) 
+      {
+        for (j=0; j < dim-4; j+=4) 
+        {
+          result->initCandidates[i][j]->copyFrom(*initCandidates[i][j]);
+          result->initCandidates[i][j+1]->copyFrom(*initCandidates[i][j+1]);
+          result->initCandidates[i][j+2]->copyFrom(*initCandidates[i][j+2]);
+          result->initCandidates[i][j+3]->copyFrom(*initCandidates[i][j+3]);
+        }
+        for (j; j < dim; j++) 
+        {
           result->initCandidates[i][j]->copyFrom(*initCandidates[i][j]);
         }
       }
@@ -204,40 +239,114 @@ struct Puzzle {
     void setupPreassigned() {
       numUnassigned = dim*dim;
       preassigned = new2dBoolArray(dim);
+      int j;
       for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
-          if (sudoku[i][j] > 0) {
+        for (j = 0; j < dim-2; j+=2) 
+        {
+          if (sudoku[i][j] > 0) 
+          {
             preassigned[i][j] = true;
             numUnassigned--;
           }
-          else {
+          else 
+          {
+            preassigned[i][j] = false;
+          }
+          
+          if (sudoku[i][j+1] > 0) 
+          {
+            preassigned[i][j+1] = true;
+            numUnassigned--;
+          }
+          else 
+          {
+            preassigned[i][j+1] = false;
+          }
+        }
+        
+        for (j; j < dim; j++) 
+        {
+          if (sudoku[i][j] > 0) 
+          {
+            preassigned[i][j] = true;
+            numUnassigned--;
+          }
+          else 
+          {
             preassigned[i][j] = false;
           }
         }
       }
     }
     
-    void createCandidateLists() {
+    void createCandidateLists() 
+    {
       initCandidates = new CandidateList**[dim];
       currentCandidates = new CandidateList**[dim];
-      for (int i = 0; i < dim; i++) {
+      int j;
+      for (int i = 0; i < dim; i++) 
+      {
         initCandidates[i] = new CandidateList*[dim];
         currentCandidates[i] = new CandidateList*[dim];
-        for (int j = 0; j < dim; j++) {
+        for (j = 0; j < dim-4; j+=4) 
+        {
           initCandidates[i][j] = new CandidateList(dim);
-          initCandidates[i][j]->initialize();
+          initCandidates[i][j]->initialize(true);
           currentCandidates[i][j] = new CandidateList(dim);
-          currentCandidates[i][j]->initialize();
+          currentCandidates[i][j]->initialize(false);
+          
+          initCandidates[i][j+1] = new CandidateList(dim);
+          initCandidates[i][j+1]->initialize(true);
+          currentCandidates[i][j+1] = new CandidateList(dim);
+          currentCandidates[i][j+1]->initialize(false);
+          
+          initCandidates[i][j+2] = new CandidateList(dim);
+          initCandidates[i][j+2]->initialize(true);
+          currentCandidates[i][j+2] = new CandidateList(dim);
+          currentCandidates[i][j+2]->initialize(false);
+          
+          initCandidates[i][j+3] = new CandidateList(dim);
+          initCandidates[i][j+3]->initialize(true);
+          currentCandidates[i][j+3] = new CandidateList(dim);
+          currentCandidates[i][j+3]->initialize(false);
+        }
+        
+        for (j; j < dim; j++) 
+        {
+          initCandidates[i][j] = new CandidateList(dim);
+          initCandidates[i][j]->initialize(true);
+          currentCandidates[i][j] = new CandidateList(dim);
+          currentCandidates[i][j]->initialize(false);
         }
       }
     }
 
     void setupCandidateLists() {
       createCandidateLists();
-      for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
-          int element = sudoku[i][j];
-          if (element > 0) {
+      int j;
+      int element;
+      for (int i = 0; i < dim; i++) 
+      {
+        for (j = 0; j < dim-2; j+=2) 
+        {
+          element = sudoku[i][j];
+          if (element > 0) 
+          {
+            updateNeighborConflicts(i, j, element, true);
+          }
+          
+          element = sudoku[i][j+1];
+          if (element > 0) 
+          {
+            updateNeighborConflicts(i, j+1, element, true);
+          }
+        }
+        
+        for (j; j < dim; j++) 
+        {
+          element = sudoku[i][j];
+          if (element > 0) 
+          {
             updateNeighborConflicts(i, j, element, true);
           }
         }
@@ -248,9 +357,36 @@ struct Puzzle {
       delete2dBoolArray(preassigned, dim);
     }
     
-    void teardownCandidateLists() {
-      for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
+    void teardownCandidateLists() 
+    {
+      int j;
+      for (int i = 0; i < dim; i++) 
+      {
+        for (j = 0; j < dim-4; j+=4) 
+        {
+          initCandidates[i][j]->deinitialize();
+          currentCandidates[i][j]->deinitialize();
+          delete initCandidates[i][j];
+          delete currentCandidates[i][j];
+          
+          initCandidates[i][j+1]->deinitialize();
+          currentCandidates[i][j+1]->deinitialize();
+          delete initCandidates[i][j+1];
+          delete currentCandidates[i][j+1];
+          
+          initCandidates[i][j+2]->deinitialize();
+          currentCandidates[i][j+2]->deinitialize();
+          delete initCandidates[i][j+2];
+          delete currentCandidates[i][j+2];
+          
+          initCandidates[i][j+3]->deinitialize();
+          currentCandidates[i][j+3]->deinitialize();
+          delete initCandidates[i][j+3];
+          delete currentCandidates[i][j+3];
+        }
+        
+        for (j; j < dim; j++) 
+        {
           initCandidates[i][j]->deinitialize();
           currentCandidates[i][j]->deinitialize();
           delete initCandidates[i][j];
@@ -340,18 +476,25 @@ struct Puzzle {
 
     	return true;
       */
-      if (numUnassigned == positionOnVisited + 1) {
+      if (numUnassigned == positionOnVisited + 1) 
+      {
         return false;
       }
-      else {
+      else 
+      {
         int newRow = 0;
         int newCol = 0;
         int newNumCandidates = dim + dim;
-        for (int row = 0; row < dim; row++) {
-          for (int col = 0; col < dim; col++) {
-            if (!preassigned[row][col] && sudoku[row][col] == -1) {
+        
+        for (int row = 0; row < dim; row++) 
+        {
+          for (int col = 0; col < dim; col++) 
+          {
+            if (!preassigned[row][col] && sudoku[row][col] == -1) 
+            {
               int thisNumCandidates = numCandidates(row, col, true);
-              if (thisNumCandidates < newNumCandidates) {
+              if (thisNumCandidates < newNumCandidates) 
+              {
                 newNumCandidates = thisNumCandidates;
                 newRow = row;
                 newCol = col;
@@ -360,7 +503,8 @@ struct Puzzle {
           }
         }
 
-        if (positionOnVisited >= 0) {
+        if (positionOnVisited >= 0) 
+        {
           rowsVisited[positionOnVisited] = getCurrentRow();
           colsVisited[positionOnVisited] = getCurrentCol();
         }
@@ -613,9 +757,68 @@ struct Puzzle {
       
       //printf("slot to update is %i, %i\n", x, y);
   //    printf("startBlockRow: %i, startBlockCol: %i, endBlockRow: %i, endBlockCol: %i\n", startBlockRow, startBlockCol, endBlockRow, endBlockCol);
+      int k;
       for (int j = startBlockRow; j < endBlockRow; j++) 
       {
-        for (int k = startBlockCol; k < endBlockCol; k++) 
+        for (k = startBlockCol; k < endBlockCol-4; k+=4) 
+        {
+          //printf("looping to slot %i, %i\n", j, k);
+          if (j != x && k != y && !preassigned[j][k]) 
+          {
+            //printf("adding block conflict to %i, %i\n", j, k);
+            if (addConflict) 
+            {
+              incrConflict(j, k, i, true);
+            }
+            else 
+            {
+              decrConflict(j, k, i, true);        
+            }
+          }
+          
+          if (j != x && k+1 != y && !preassigned[j][k+1]) 
+          {
+            //printf("adding block conflict to %i, %i\n", j, k+1);
+            if (addConflict) 
+            {
+              incrConflict(j, k+1, i, true);
+            }
+            else 
+            {
+              decrConflict(j, k+1, i, true);        
+            }
+          }
+          
+          
+          if (j != x && k+2 != y && !preassigned[j][k+2]) 
+          {
+            //printf("adding block conflict to %i, %i\n", j, k+2);
+            if (addConflict) 
+            {
+              incrConflict(j, k+2, i, true);
+            }
+            else 
+            {
+              decrConflict(j, k+2, i, true);        
+            }
+          }
+          
+          
+          if (j != x && k+3 != y && !preassigned[j][k+3]) 
+          {
+            //printf("adding block conflict to %i, %i\n", j, k+3);
+            if (addConflict) 
+            {
+              incrConflict(j, k+3, i, true);
+            }
+            else 
+            {
+              decrConflict(j, k+3, i, true);        
+            }
+          }
+        }
+        
+        for (k; k < endBlockCol; k++) 
         {
           //printf("looping to slot %i, %i\n", j, k);
           if (j != x && k != y && !preassigned[j][k]) 
@@ -847,7 +1050,8 @@ struct Puzzle {
     
     int nextCandidate(int x, int y) {
       CandidateList* list = currentCandidates[x][y];
-      for (int i = 0; i < list->dim; i++) {
+      int i;
+      for (i = 0; i < list->dim; i++) {
         if (list->conflicts[i] == 0) {
           return i+1;
         }
@@ -907,7 +1111,8 @@ int** fileTo2dArray(char* fileName, int dim) {
 
 int** new2dIntArray(int dim) {
   int** theArray = new int*[dim];
-  for (int i = 0; i < dim; i++) {
+  int i;
+  for (i = 0; i < dim; i++) {
     theArray[i] = new int[dim];
   }
   return theArray;
