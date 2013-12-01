@@ -226,7 +226,7 @@ int main(int argc, char *argv[]) {
       }
       toSolve.push_back(forSolving);
 
-      printf("toSolve size: %i\n", toSolve.size());
+      printf("toSolve size: %i\n", (int)toSolve.size());
 
       if (reverseSlot(p)) {
         currentDepth--;
@@ -284,7 +284,7 @@ int main(int argc, char *argv[]) {
   //printf("deinitialized\n");
   delete p;
 
-  printf("number of branches: %i\n", toSolve.size());
+  printf("number of branches: %i\n", (int)toSolve.size());
 
   if (solved == NULL) {
     solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
