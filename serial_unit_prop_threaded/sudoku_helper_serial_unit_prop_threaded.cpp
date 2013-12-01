@@ -660,6 +660,85 @@ struct Puzzle {
     
     bool checkNeighborCandidates(int x, int y) {
       int i=0;
+      for (i; i < dim-4; i+=4) 
+      {
+        if (!preassigned[x][i]) 
+        {
+          if (!checkCandidates(x, i, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i);
+            //std::cout << initCandidates[x][i]->toString() << " ";
+            return false;
+          }
+        }
+        if (!preassigned[i][y]) 
+        {
+          if (!checkCandidates(i, y, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", i, y);
+            //std::cout << initCandidates[i][y]->toString() << " ";
+            return false;
+          }
+        }
+        
+        if (!preassigned[x][i+1]) 
+        {
+          if (!checkCandidates(x, i+1, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i+1);
+            //std::cout << initCandidates[x][i+1]->toString() << " ";
+            return false;
+          }
+        }
+        if (!preassigned[i+1][y]) 
+        {
+          if (!checkCandidates(i+1, y, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", i+1, y);
+            //std::cout << initCandidates[i+1][y]->toString() << " ";
+            return false;
+          }
+        }
+        
+        if (!preassigned[x][i+2]) 
+        {
+          if (!checkCandidates(x, i+2, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i+2);
+            //std::cout << initCandidates[x][i+2]->toString() << " ";
+            return false;
+          }
+        }
+        if (!preassigned[i+2][y]) 
+        {
+          if (!checkCandidates(i+2, y, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", i+2, y);
+            //std::cout << initCandidates[i+2][y]->toString() << " ";
+            return false;
+          }
+        }
+        
+        if (!preassigned[x][i+3]) 
+        {
+          if (!checkCandidates(x, i+3, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i+3);
+            //std::cout << initCandidates[x][i+3]->toString() << " ";
+            return false;
+          }
+        }
+        if (!preassigned[i+3][y]) 
+        {
+          if (!checkCandidates(i+3, y, true)) 
+          {
+            //printf("checkNeighborCandidates returning false at: %i, %i\n", i+3, y);
+            //std::cout << initCandidates[i+3][y]->toString() << " ";
+            return false;
+          }
+        }
+      }
+      
       for (i; i < dim; i++) 
       {
         if (!preassigned[x][i]) 
@@ -682,15 +761,62 @@ struct Puzzle {
         }
       }
       
+      
       int startBlockRow = startOfCurrentBlockRow(x);
-      int startBlockCol = startOfCurrentBlockCol(y);
+      int k = startOfCurrentBlockCol(y);
       int endBlockRow = startBlockRow + blockSize;
-      int endBlockCol = startBlockCol + blockSize;
+      int endBlockCol = k + blockSize;
       
       for (int j = startBlockRow; j < endBlockRow; j++) {
-        for (int k = startBlockCol; k < endBlockCol; k++) {
-          if (j != x && k != y) {
-            if (!checkCandidates(j, k, true)) {
+        for (k; k < endBlockCol-4; k+=4) 
+        {
+          if (j != x && k != y) 
+          {
+            if (!checkCandidates(j, k, true)) 
+            {
+              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
+              //std::cout << initCandidates[j][k]->toString() << " ";
+              return false;
+            }
+          }
+          
+          if (j != x && k+1 != y) 
+          {
+            if (!checkCandidates(j, k+1, true)) 
+            {
+              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k+1);
+              //std::cout << initCandidates[j][k+1]->toString() << " ";
+              return false;
+            }
+          }
+          
+          if (j != x && k+2 != y) 
+          {
+            if (!checkCandidates(j, k+2, true)) 
+            {
+              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k+2);
+              //std::cout << initCandidates[j][k+2]->toString() << " ";
+              return false;
+            }
+          }
+          
+          if (j != x && k+3 != y) 
+          {
+            if (!checkCandidates(j, k+3, true)) 
+            {
+              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k+3);
+              //std::cout << initCandidates[j][k+3]->toString() << " ";
+              return false;
+            }
+          }
+        }
+        
+        for (k; k < endBlockCol; k++) 
+        {
+          if (j != x && k != y) 
+          {
+            if (!checkCandidates(j, k, true)) 
+            {
               //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
               //std::cout << initCandidates[j][k]->toString() << " ";
               return false;
