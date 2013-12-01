@@ -164,7 +164,8 @@ struct Puzzle {
       result->setupPreassigned();
       result->setupVisited();
       result->createCandidateLists();
-      int j;
+      int j;      
+
       for (int i = 0; i < dim; i++) 
       {
         for (j=0; j < dim-4; j+=4) 
@@ -240,7 +241,9 @@ struct Puzzle {
       numUnassigned = dim*dim;
       preassigned = new2dBoolArray(dim);
       int j;
-      for (int i = 0; i < dim; i++) {
+
+      for (int i = 0; i < dim; i++) 
+      {
         for (j = 0; j < dim-2; j+=2) 
         {
           if (sudoku[i][j] > 0) 
@@ -284,6 +287,7 @@ struct Puzzle {
       initCandidates = new CandidateList**[dim];
       currentCandidates = new CandidateList**[dim];
       int j;
+      
       for (int i = 0; i < dim; i++) 
       {
         initCandidates[i] = new CandidateList*[dim];
@@ -407,9 +411,18 @@ struct Puzzle {
       print2dArray(sudoku, dim);
     }
     
-    void printPreassigned() {
+    void printPreassigned() 
+    {
+      int j;
       for (int i = 0; i < dim; i++) {
-        for (int j = 0; j < dim; j++) {
+        for (j = 0; j < dim-4; j+=4) {
+          std::cout << preassigned[i][j] << " ";
+          std::cout << preassigned[i][j+1] << " ";
+          std::cout << preassigned[i][j+2] << " ";
+          std::cout << preassigned[i][j+3] << " ";
+        }
+        
+        for (j; j < dim; j++) {
           std::cout << preassigned[i][j] << " ";
         }
         std::cout << "\n";
@@ -439,7 +452,14 @@ struct Puzzle {
     
     void copyCandidates(int x, int y) //Brennan
     {
-      for (int i = 0; i < dim; i++) {
+      int i;
+      for (i = 0; i < dim-4; i+=4) {
+        currentCandidates[x][y]->conflicts[i] = initCandidates[x][y]->conflicts[i];
+        currentCandidates[x][y]->conflicts[i+1] = initCandidates[x][y]->conflicts[i+1];
+        currentCandidates[x][y]->conflicts[i+2] = initCandidates[x][y]->conflicts[i+2];
+        currentCandidates[x][y]->conflicts[i+3] = initCandidates[x][y]->conflicts[i+3];
+      }
+      for (i; i < dim; i++) {
         currentCandidates[x][y]->conflicts[i] = initCandidates[x][y]->conflicts[i];
       }
     }
@@ -621,8 +641,9 @@ struct Puzzle {
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
     // to i. update initial candidate lists
     void updateNeighborConflicts(int x, int y, int i, bool addConflict) {
-      int index=0;
-      for (index; index < dim-4; index+=4) 
+      
+      int index;
+      for (index=0; index < dim-4; index+=4) 
       {
         if (!preassigned[x][index]) 
         {
@@ -757,6 +778,7 @@ struct Puzzle {
       
       //printf("slot to update is %i, %i\n", x, y);
   //    printf("startBlockRow: %i, startBlockCol: %i, endBlockRow: %i, endBlockCol: %i\n", startBlockRow, startBlockCol, endBlockRow, endBlockCol);
+  
       int k;
       for (int j = startBlockRow; j < endBlockRow; j++) 
       {
@@ -970,7 +992,8 @@ struct Puzzle {
       int endBlockRow = startBlockRow + blockSize;
       int endBlockCol = k + blockSize;
       
-      for (int j = startBlockRow; j < endBlockRow; j++) {
+      for (int j = startBlockRow; j < endBlockRow; j++) 
+      {
         for (k; k < endBlockCol-4; k+=4) 
         {
           if (j != x && k != y) 
