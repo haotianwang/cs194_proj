@@ -477,17 +477,9 @@ struct Puzzle {
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
     // to i. update initial candidate lists
     void updateNeighborConflicts(int x, int y, int i, bool addConflict) {
-<<<<<<< HEAD
-      int index=0;
-      for (index; index < dim-4; index+=4) 
-      {
-        if (!preassigned[x][index]) 
-        {
-          if (addConflict) 
-          {
-=======
+
       int index;
-      for (index = 0; index < dim; index+=4) {
+      for (index = 0; index < dim-4; index+=4) {
         if (!preassigned[x][index]) {
           if (addConflict) {
             incrConflict(x, index, i, true);
@@ -561,10 +553,10 @@ struct Puzzle {
         }        
       }
       
+      /*
       for (index; index < dim; index++) {
         if (!preassigned[x][index]) {
           if (addConflict) {
->>>>>>> 1ca3354375b2b115f30eba04bc460419ba911091
             incrConflict(x, index, i, true);
           }
           else 
@@ -657,6 +649,7 @@ struct Puzzle {
           }
         }
       }
+      */
       
       for (index; index < dim; index++) 
       {
