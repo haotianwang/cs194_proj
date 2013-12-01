@@ -235,7 +235,7 @@ struct Puzzle {
         for (int j = 0; j < dim; j++) {
           int element = sudoku[i][j];
           if (element > 0) {
-            updateNeighborConflicts(i, j, element, true); 
+            updateNeighborConflicts(i, j, element, true);
           }
         }
       }

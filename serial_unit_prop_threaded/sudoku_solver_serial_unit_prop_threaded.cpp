@@ -202,8 +202,10 @@ int main(int argc, char *argv[]) {
   int highestVisitedPosition = 0;
   int currentDepth = 0;
   int parallelStartDepth = 1;
+  int vectorSizeLimit = 1;
   //int counter=10000;
   std::vector<Puzzle*> toSolve;
+  Puzzle* solved = NULL;
 
 
   while (!p->isSolved()) {
@@ -232,6 +234,17 @@ int main(int argc, char *argv[]) {
       }
       else {
         break;
+      }
+
+      if (toSolve.size() > vectorSizeLimit) {
+        printf("toSolve reached %i elements, attempting solve now\n", vectorSizeLimit);
+        solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
+        if (solved != NULL) {
+          break;
+        }
+        else while (toSolve.size() > 0) {
+          toSolve.pop_back();
+        }
       }
     }
     else if (checkCurrentCandidates(p)) {
@@ -270,26 +283,27 @@ int main(int argc, char *argv[]) {
   p->deinitialize();
   //printf("deinitialized\n");
   delete p;
-  p = NULL;
 
   printf("number of branches: %i\n", toSolve.size());
 
-  p = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
+  if (solved == NULL) {
+    solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
+  }
 
   printf("parallel start depth was %i\n", parallelStartDepth);
   
-  if (p != NULL && p->isSolved()) {
+  if (solved != NULL && solved->isSolved()) {
     printf("solution found!\n");
-    p->printGrid();
+    solved->printGrid();
   }
   else {
     printf("no solution found\n");
   }
 
     //printf("deinitializing\n");
-  p->deinitialize();
+  solved->deinitialize();
   //printf("deinitialized\n");
-  delete p;
+  delete solved;
 
   //timer
   double seconds_since_start = difftime( time(0), startTime);
