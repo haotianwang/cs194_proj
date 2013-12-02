@@ -8,6 +8,8 @@
 
 #include "sudoku_helper_serial_unit_prop_threaded.cpp"
 
+int numThreads = 2;awdgfaweaf
+
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {
   if (testLevel > 0) printf("step 1: on (%i, %i)\n", p->getCurrentRow(), p->getCurrentCol());
@@ -109,12 +111,22 @@ bool solveInitializedPuzzle(Puzzle* p, int highestVisitedPosition) {
   return p->isSolved();
 }
 
-Puzzle* solveInitializedPuzzles(std::vector<Puzzle*>* toSolve, int highestVisitedPosition) {
+Puzzle* solveInitializedPuzzles(std::vector<Puzzle*>* toSolve, int highestVisitedPosition, int* numTried) {
   Puzzle* p = NULL;
+
+  omp_set_num_threads(2);
+
   #pragma omp parallel for
   for (int i = toSolve->size()-1; i >= 0; i--) {
-    printf("puzzle to solve:\n");
-    toSolve->at(i)->printGrid();
+
+    int thisPuzzleNum;
+    #pragma omp critical
+    {
+      numTried[0] += 1;
+      thisPuzzleNum = numTried[0];
+    }
+
+    printf("attempting to solve initialized puzzle: puzzle num %i\n", thisPuzzleNum);
     if (solveInitializedPuzzle(toSolve->at(i), highestVisitedPosition)) {
       #pragma omp critical 
       {
@@ -125,9 +137,10 @@ Puzzle* solveInitializedPuzzles(std::vector<Puzzle*>* toSolve, int highestVisite
       }
     }
     else {
-      printf("led to dead end\n");
       toSolve->at(i)->deinitialize();
       delete toSolve->at(i);
+        numTried[0] += 1;
+        printf("led to dead end: puzzle num %i\n", thisPuzzleNum);
     }
   }
   return p;
@@ -201,11 +214,13 @@ int main(int argc, char *argv[]) {
 
   int highestVisitedPosition = 0;
   int currentDepth = 0;
-  int parallelStartDepth = 2;
+  int parallelStartDepth = 9;
   int vectorSizeLimit = 100;
+  int numTried = 0;
   //int counter=10000;
   std::vector<Puzzle*> toSolve;
   Puzzle* solved = NULL;
+  //p->mostConstrained = false;
 
   while (!p->isSolved()) {
 
@@ -237,7 +252,7 @@ int main(int argc, char *argv[]) {
 
       if (toSolve.size() >= vectorSizeLimit) {
         printf("toSolve reached %i elements, attempting solve now\n", vectorSizeLimit);
-        solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
+        solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition, &numTried);
         if (solved != NULL) {
           break;
         }
@@ -279,17 +294,23 @@ int main(int argc, char *argv[]) {
   }
 
   //printf("deinitializing\n");
-  p->deinitialize();
-  //printf("deinitialized\n");
-  delete p;
+  if (!p->isSolved()) {
+    p->deinitialize();
+    //printf("deinitialized\n");
+    delete p;
 
-  printf("number of branches: %i\n", (int)toSolve.size());
+    printf("number of branches: %i\n", toSolve.size());
 
-  if (solved == NULL) {
-    solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition);
+    if (solved == NULL) {
+      solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition, &numTried);
+    }
+
+    printf("parallel start depth was %i\n", parallelStartDepth);
   }
-
-  printf("parallel start depth was %i\n", parallelStartDepth);
+  else {
+    solved = p;
+    printf("puzzle solved while creating parallel branches, no parallelism done\n");
+  }
   
   if (solved != NULL && solved->isSolved()) {
     printf("solution found!\n");

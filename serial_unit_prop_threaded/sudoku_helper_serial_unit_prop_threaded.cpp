@@ -135,6 +135,7 @@ struct Puzzle {
   int** sudoku;
   int dim;
   bool initialized;
+  bool mostConstrained;
 
   int* rowsVisited;
   int* colsVisited;
@@ -155,6 +156,7 @@ struct Puzzle {
       dim = dimInput;
       blockSize = (int) sqrt ((float) dim);
       initialized = false;
+      mostConstrained = true;
     }
 
     Puzzle* makePreassignedCopy() {
@@ -471,70 +473,86 @@ struct Puzzle {
     
     bool nextSlot() //Brennan
     {
-      /*
-    	if (currentCol==dim-1)
-    	{
-    		if (currentRow!=dim-1)
-    		{
-    			currentCol=0;
-    			currentRow+=1;
-    		}
-    		else
-    		{
-    			return false;
-    		}
-    	}
-    	else
-    	{
-    		currentCol+=1;
-    	}
-
-    	if (preassigned[currentRow][currentCol] ==true)
-    	{
-    		return nextSlot();
-    	}
-
-    	return true;
-      */
       if (numUnassigned == positionOnVisited + 1) 
       {
         return false;
       }
       else 
       {
-        int newRow = 0;
-        int newCol = 0;
-        int newNumCandidates = dim + dim;
-        
-        for (int row = 0; row < dim; row++) 
+        if (mostConstrained) {
+          nextSlotMostConstrained();
+        }
+        else {
+          nextSlotLeastConstrained();
+        }
+        return true;
+      }
+    }
+
+    void nextSlotLeastConstrained() {
+      int newRow = 0;
+      int newCol = 0;
+      int newNumCandidates = -1;
+      
+      for (int row = 0; row < dim; row++) 
+      {
+        for (int col = 0; col < dim; col++) 
         {
-          for (int col = 0; col < dim; col++) 
+          if (!preassigned[row][col] && sudoku[row][col] == -1) 
           {
-            if (!preassigned[row][col] && sudoku[row][col] == -1) 
+            int thisNumCandidates = numCandidates(row, col, true);
+            if (thisNumCandidates > newNumCandidates) 
             {
-              int thisNumCandidates = numCandidates(row, col, true);
-              if (thisNumCandidates < newNumCandidates) 
-              {
-                newNumCandidates = thisNumCandidates;
-                newRow = row;
-                newCol = col;
-              }
+              newNumCandidates = thisNumCandidates;
+              newRow = row;
+              newCol = col;
             }
           }
         }
-
-        if (positionOnVisited >= 0) 
-        {
-          rowsVisited[positionOnVisited] = getCurrentRow();
-          colsVisited[positionOnVisited] = getCurrentCol();
-        }
-
-        positionOnVisited++;
-        currentRow = newRow;
-        currentCol = newCol;
-
-        return true;
       }
+
+      if (positionOnVisited >= 0) 
+      {
+        rowsVisited[positionOnVisited] = getCurrentRow();
+        colsVisited[positionOnVisited] = getCurrentCol();
+      }
+
+      positionOnVisited++;
+      currentRow = newRow;
+      currentCol = newCol;
+    }
+
+    void nextSlotMostConstrained() {
+      int newRow = 0;
+      int newCol = 0;
+      int newNumCandidates = dim + dim;
+      
+      for (int row = 0; row < dim; row++) 
+      {
+        for (int col = 0; col < dim; col++) 
+        {
+          if (!preassigned[row][col] && sudoku[row][col] == -1) 
+          {
+            int thisNumCandidates = numCandidates(row, col, true);
+            if (thisNumCandidates < newNumCandidates) 
+            {
+              newNumCandidates = thisNumCandidates;
+              newRow = row;
+              newCol = col;
+            }
+          }
+        }
+      }
+
+      if (positionOnVisited >= 0) 
+      {
+        rowsVisited[positionOnVisited] = getCurrentRow();
+        colsVisited[positionOnVisited] = getCurrentCol();
+      }
+
+      positionOnVisited++;
+      currentRow = newRow;
+      currentCol = newCol;
     }
 
     int numCandidates(int x, int y, int initList) {
