@@ -8,7 +8,9 @@
 
 #include "sudoku_helper_serial_unit_prop_threaded.cpp"
 
-int numThreads = 2;awdgfaweaf
+int numThreads = 50;
+int parallelStartDepth = 40;
+int vectorSizeLimit = 100;
 
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {
@@ -114,7 +116,7 @@ bool solveInitializedPuzzle(Puzzle* p, int highestVisitedPosition) {
 Puzzle* solveInitializedPuzzles(std::vector<Puzzle*>* toSolve, int highestVisitedPosition, int* numTried) {
   Puzzle* p = NULL;
 
-  omp_set_num_threads(2);
+  omp_set_num_threads(numThreads);
 
   #pragma omp parallel for
   for (int i = toSolve->size()-1; i >= 0; i--) {
@@ -214,8 +216,6 @@ int main(int argc, char *argv[]) {
 
   int highestVisitedPosition = 0;
   int currentDepth = 0;
-  int parallelStartDepth = 9;
-  int vectorSizeLimit = 100;
   int numTried = 0;
   //int counter=10000;
   std::vector<Puzzle*> toSolve;

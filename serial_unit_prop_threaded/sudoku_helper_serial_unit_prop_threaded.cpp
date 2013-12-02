@@ -128,6 +128,15 @@ struct CandidateList {
     conflicts[i-1]=-1;
   }
 
+  int nextCandidate() {
+    int i;
+    for (i = 0; i < list->dim; i++) {
+      if (conflicts[i] == 0) {
+        return i+1;
+      }
+    }
+    return -1;
+  }
 };
 
 struct Puzzle {
@@ -1075,7 +1084,7 @@ struct Puzzle {
     // assigns next number in currentCandidateList to x,y, returns success/failure
     bool assign(int x, int y) {
 
-      int toBeAssigned = nextCandidate(x, y);
+      int toBeAssigned = nextCandidate(x, y, false);
       if (testLevel > 1) printf("next candidate found to be %i\n", toBeAssigned);
       if (toBeAssigned == -1) {
         return false;
@@ -1089,15 +1098,15 @@ struct Puzzle {
       }
     }
     
-    int nextCandidate(int x, int y) {
-      CandidateList* list = currentCandidates[x][y];
-      int i;
-      for (i = 0; i < list->dim; i++) {
-        if (list->conflicts[i] == 0) {
-          return i+1;
-        }
+    int nextCandidate(int x, int y, bool initial) {
+      CandidateList* list;
+      if (initial) {
+        list = initCandidates[x][y];
+      } else {
+        list = currentCandidates[x][y];
       }
-      return -1;
+
+      return list->nextCandidate();
     }
 
     bool isSolved() {
