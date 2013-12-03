@@ -15,7 +15,6 @@ int vectorSizeLimit = 100;
 // step 1
 bool checkCurrentCandidates(Puzzle* p) {
   if (testLevel > 0) printf("step 1: on (%i, %i)\n", p->getCurrentRow(), p->getCurrentCol());
-  //printf("step 1: current row %i, current col %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
   return p->checkCandidates(p->getCurrentRow(), p->getCurrentCol(), false);
 }
 
@@ -23,7 +22,6 @@ bool checkCurrentCandidates(Puzzle* p) {
 // step 2. Returns whether reversing the slot succeeds.
 bool reverseSlot(Puzzle* p) {
   if (testLevel > 0) printf("step 2: reversing slot\n");
-  p->resetCandidates(p->getCurrentRow(), p->getCurrentCol());
   return p->prevSlot();
 }
 
@@ -34,14 +32,7 @@ bool assignAndValidate(Puzzle* p) {
   if (p->assign(p->getCurrentRow(), p->getCurrentCol())) {
     if (testLevel > 0) 
       printf("step 3: on (%i, %i), assigned %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
-    //printf("step 3: assignment succeeded\n");
-    //printf("calling updateNeighborConflicts with %i, %i, %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
-    //printf("pre-assign candidate list: \n"); 
-    //p->printInitCandidates();
     p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), true);
-    //printf("post-assign candidate list: \n"); 
-    //p->printInitCandidates();    
-//    printf("step 3: updateNeighborConflicts succeeded\n");
     return p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
   }
   else {
@@ -55,11 +46,7 @@ bool assignAndValidate(Puzzle* p) {
 void backtrack(Puzzle* p) {
   if (testLevel > 0) 
     printf("step 4: on (%i, %i), unassigning %i\n", p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()));
-  //printf("pre-update candidate list: \n"); 
-  //p->printInitCandidates();
   p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(p->getCurrentRow(), p->getCurrentCol()), false);
-  //printf("post-update candidate list: \n"); 
-  //p->printInitCandidates();
   p->removeAndInvalidate(p->getCurrentRow(), p->getCurrentCol());
   // loops back to front
 }
@@ -81,30 +68,24 @@ bool solveInitializedPuzzle(Puzzle* p, int highestVisitedPosition) {
     }
     // step 1
     if (checkCurrentCandidates(p)) {
-      //printf("step 3\n");
       // step 3
       bool succeeded = assignAndValidate(p);
       if (succeeded) {
-        //printf("step 5\n");
         // step 5
         advanceSlot(p);
       }
       else {
-        //printf("step 4\n");
         // step 4
         backtrack(p);
       }
     }
     else {
-      //printf("step 2\n");
       // step 2
       if (reverseSlot(p)) {
-        //printf("step 4\n");
         // step 4
         backtrack(p);
       }
       else {
-        //printf("step 2 failed\n");
         break;
       }
     }
@@ -170,41 +151,12 @@ int main(int argc, char *argv[]) {
   int dim = atoi(argv[2]);
 
   if (dim<16) parallelStartDepth=86;
-  
-  /*  
-  p->printGridDim();
-  p->printGrid();
-  p->printPreassigned();
-  p->printInitCandidates();
-  
-  printf("start: %i, %i\n", p->getCurrentRow(), p->getCurrentCol());
-  while (p->nextSlot()) {
-    printf("nextslot: row is %i, col is %i\n", p->getCurrentRow(), p->getCurrentCol());
-  }
-  
-  while (p->prevSlot()) {
-    printf("prevslot: row is %i, col is %i\n", p->getCurrentRow(), p->getCurrentCol());
-  }
-  
-
-  printf("TEST: check candidates\n");
-  p->checkCandidates(p->getCurrentRow(), p->getCurrentCol());
-  printf("TEST: assign\n");
-  p->assign(p->getCurrentRow(), p->getCurrentCol());
-  printf("TEST: update neighbors\n");
-  p->updateNeighborConflicts(p->getCurrentRow(), p->getCurrentCol(), p->getCurrentAssigned(0, 0), true);
-  printf("TEST: check neighbors\n");
-  p->checkNeighborCandidates(p->getCurrentRow(), p->getCurrentCol());
-  */
-
 
   int highestVisitedPosition = 0;
   int currentDepth = 0;
   int numTried = 0;
-  //int counter=10000;
   std::vector<Puzzle*> toSolve;
   Puzzle* solved = NULL;
-  //p->mostConstrained = false;
 
   while (!p->isSolved()) {
 
@@ -246,27 +198,22 @@ int main(int argc, char *argv[]) {
       }
     }
     else if (checkCurrentCandidates(p)) {
-      //printf("step 3\n");
       // step 3
       bool succeeded = assignAndValidate(p);
       if (succeeded) {
-        //printf("step 5\n");
         // step 5
         advanceSlot(p);
         currentDepth++;
       }
       else {
-        //printf("step 4\n");
         // step 4
         backtrack(p);
       }
     }
     else {
-      //printf("step 2\n");
       // step 2
       if (reverseSlot(p)) {
         currentDepth--;
-        //printf("step 4\n");
         // step 4
         backtrack(p);
       }
@@ -277,10 +224,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  //printf("deinitializing\n");
   if (!p->isSolved()) {
     p->deinitialize();
-    //printf("deinitialized\n");
     delete p;
 
     if (testLevel > 1) printf("number of branches: %i\n", (int)toSolve.size());
@@ -304,9 +249,7 @@ int main(int argc, char *argv[]) {
     printf("no solution found\n");
   }
 
-    //printf("deinitializing\n");
   solved->deinitialize();
-  //printf("deinitialized\n");
   delete solved;
 
   //timer

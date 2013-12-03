@@ -57,10 +57,6 @@ struct CandidateList {
     }
 
     void copyFrom(CandidateList source) {
-      /*
-      size_t size = dim*sizeof(int);
-      memcpy(conflicts, source.conflicts, size);
-      */
       num = source.num;
       bitZero = source.bitZero;
       bitOne = source.bitOne;
@@ -69,19 +65,6 @@ struct CandidateList {
     void initialize(bool initial) {
       num=dim;
       init=initial;
-      /*
-      conflicts = new int[dim];
-      int i=0;
-      for (i; i < dim-4; i+=4) {
-        conflicts[i] = 0;
-        conflicts[i+1] = 0;
-        conflicts[i+2] = 0;
-        conflicts[i+3] = 0;
-      }
-      for (i; i < dim; i++) {
-        conflicts[i] = 0;
-      }
-      */
 
       // vectorization
       switch (dim) {
@@ -132,32 +115,7 @@ struct CandidateList {
     
     void changeConflict(int nums, int change) 
     {
-      //printf("conflict change of %i to %i\n", nums, change);
-      //printf("candidateList: \n");
-      //std::cout << toString() << "\n";
-      //printf("vector candidate string: \n");
-      //printVectorString();
-
       changeConflictVectorized(nums, change);
-
-      // correct for starting at 0
-      //int val=conflicts[nums-1];
-      //val=val + change;
-      /*
-      if(conflicts[nums-1]>0 && val==0)
-      {
-        num=num+1;
-      }
-      if(conflicts[nums-1]<1 && val>0)
-      {
-        num=num-1;
-      }
-      */
-      //conflicts[nums-1]=val;
-
-      //printf("after: \n");
-      //std::cout << toString() << "\n";
-      //printVectorString();
     }
 
     int changeConflictsVectorizedNum(int oldNumTracker, int nums, int change) {\
@@ -215,40 +173,6 @@ struct CandidateList {
     //returns if there is still a valid candidate for this slot
     bool checkCandidates() //Brennan
   	{
-      // if (num>0 && !init)
-      // {
-        // printf("valid num candidates: num=%i\n", num);    
-        // return true;
-      // }
-      // else
-      // {
-        // printf("RETURNED FALSE\n");
-        // return false;
-      // }
-
-      /*
-      bool result = false;
-      int i=0;
-      for (i; i<dim-4; i+=4)
-  		{
-  			if (conflicts[i]==0) result = true;
-        if (conflicts[i+1]==0) result = true;
-        if (conflicts[i+2]==0) result = true;
-        if (conflicts[i+3]==0) result = true;
-  		}
-      for (i; i<dim; i++)
-  		{
-  			if (conflicts[i]==0) result = true;
-  		}
-
-      //vectorization
-      if (checkCandidatesVectorized() != result) {
-        printf("checkCandidates serial and vectorized version don't agree: serial version shows %i\n", result);
-        exit(1);
-      }
-  		return result;
-      */
-
       return checkCandidatesVectorized();
   	}
 
@@ -264,36 +188,11 @@ struct CandidateList {
     
     void invalidateCandidate(int i)
     {
-      /*
-      if (conflicts[i-1]==0)
-      {
-        num=num-1;
-      }
-      conflicts[i-1]=-1;
-      */
       //vectorization
       changeConflictVectorized(i, 1);
     }
 
     int nextCandidate() {
-      /*
-      int i;
-      int result = -1;
-      for (i = 0; i < dim; i++) {
-        if (conflicts[i] == 0) {
-          result = i+1;
-          break;
-        }
-      }
-
-      if (result != nextCandidateVectorized()) {
-        printf("serial and vectorized nextCandidate don't agree, serial is %i and vectorized is %i\n", result, nextCandidateVectorized());
-        std::cout << toString() << "\n";
-        printVectorString();
-        exit(1);
-      }
-      return result;
-      */
       return nextCandidateVectorized();
     }
 
@@ -367,26 +266,15 @@ struct Puzzle {
     }
     
     void initialize() {
-      //printf("starting initialize\n");
       setupPreassigned();
-      //printf("preassigned set\n");
       setupVisited();
       setupCandidateLists();
-      //printf("candidate lists set\n");
       currentCol = 0;
       currentRow = 0;
       positionOnVisited = -1;
-      //while (preassigned[currentRow][currentCol]) {
-        nextSlot();
-      //}
-      //printf("slot initialized\n");
+      nextSlot();
       copyCandidates(currentRow, currentCol);
-      //printf("candidates copied\n");
-
-
-
       initialized = true;
-      //printf("initialized\n");
     }
     
     void deinitialize() {
@@ -501,7 +389,6 @@ struct Puzzle {
     }
 
     void setupCandidateLists() {
-      //printf("start candidateList setup\n");
       createCandidateLists();
       int j;
       int element;
@@ -531,7 +418,6 @@ struct Puzzle {
           }
         }
       }
-      //printf("done candidateList setup\n");
     }
     
     void teardownPreassigned() {
@@ -632,11 +518,6 @@ struct Puzzle {
       currentCandidates[x][y]->copyFrom(*initCandidates[x][y]);
     }
     
-    void resetCandidates(int x, int y) //Brennan
-    {
-    	//initCandidates[x][y]=currentCandidates[x][y];
-    }
-    
     bool nextSlot() //Brennan
     {
       if (numUnassigned == positionOnVisited + 1) 
@@ -732,31 +613,6 @@ struct Puzzle {
     
     bool prevSlot() //Brennan
     {
-      /*
-    	if (currentCol==0)
-    	{
-			  if (currentRow!=0)
-			  {
-				  currentCol=dim-1;
-				  currentRow-=1;
-			  }
-			  else
-			  {
-				  return false;
-			  }
-  		}
-  		else
-    	{
-    		currentCol-=1;
-    	}
-
-    	if (preassigned[currentRow][currentCol]==true)
-    	{
-    		return prevSlot();
-    	}
-
-    	return true;
-      */
       if (positionOnVisited < 1) {
         return false;
       }
@@ -825,15 +681,6 @@ struct Puzzle {
     // update the candidates list of row x, column y, and block (x,y) and add/subtract a conflict 
     // to i. update initial candidate lists
     void updateNeighborConflicts(int x, int y, int i, bool addConflict) {
-      /*
-      printf("updating neighbor conflicts for (%i, %i) for num %i, addconflict: %i\n", x, y, i, addConflict);
-      printInitCandidates();
-      printf("\n");
-      printGrid();
-      printf("\n");
-      printPreassigned();
-      printf("\n");
-      */
       int index;
       for (index=0; index < dim-4; index+=4) 
       {
@@ -961,25 +808,18 @@ struct Puzzle {
         }
       }
       
-      //printf("updateNeighborConflicts starting block logic\n");
-      
       int startBlockRow = startOfCurrentBlockRow(x);
       int startBlockCol = startOfCurrentBlockCol(y);
       int endBlockRow = startBlockRow + blockSize;
       int endBlockCol = startBlockCol + blockSize;
-      
-      //printf("slot to update is %i, %i\n", x, y);
-  //    printf("startBlockRow: %i, startBlockCol: %i, endBlockRow: %i, endBlockCol: %i\n", startBlockRow, startBlockCol, endBlockRow, endBlockCol);
-  
+
       int k;
       for (int j = startBlockRow; j < endBlockRow; j++) 
       {
         for (k = startBlockCol; k < endBlockCol-4; k+=4) 
         {
-          //printf("looping to slot %i, %i\n", j, k);
           if (j != x && k != y && !preassigned[j][k]) 
           {
-            //printf("adding block conflict to %i, %i\n", j, k);
             if (addConflict) 
             {
               incrConflict(j, k, i, true);
@@ -992,7 +832,6 @@ struct Puzzle {
           
           if (j != x && k+1 != y && !preassigned[j][k+1]) 
           {
-            //printf("adding block conflict to %i, %i\n", j, k+1);
             if (addConflict) 
             {
               incrConflict(j, k+1, i, true);
@@ -1006,7 +845,6 @@ struct Puzzle {
           
           if (j != x && k+2 != y && !preassigned[j][k+2]) 
           {
-            //printf("adding block conflict to %i, %i\n", j, k+2);
             if (addConflict) 
             {
               incrConflict(j, k+2, i, true);
@@ -1020,7 +858,6 @@ struct Puzzle {
           
           if (j != x && k+3 != y && !preassigned[j][k+3]) 
           {
-            //printf("adding block conflict to %i, %i\n", j, k+3);
             if (addConflict) 
             {
               incrConflict(j, k+3, i, true);
@@ -1034,10 +871,8 @@ struct Puzzle {
         
         for (k; k < endBlockCol; k++) 
         {
-          //printf("looping to slot %i, %i\n", j, k);
           if (j != x && k != y && !preassigned[j][k]) 
           {
-            //printf("adding block conflict to %i, %i\n", j, k);
             if (addConflict) 
             {
               incrConflict(j, k, i, true);
@@ -1049,23 +884,6 @@ struct Puzzle {
           }
         }
       }
-
-      /*
-      if (!preassigned[x][y]) {
-        if (addConflict)
-        {
-          decrConflict(x, y, i, true);      
-          decrConflict(x, y, i, true);
-        }
-        else
-        {
-          incrConflict(x,y,i,true);
-          incrConflict(x,y,i,true);
-        }
-      }
-      */
-
-      //printf("updateNeighborConflicts end\n");
     }
 
     int startOfCurrentBlockRow(int rowIndex) {
@@ -1088,8 +906,6 @@ struct Puzzle {
         {
           if (!checkCandidates(x, i, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i);
-            //std::cout << initCandidates[x][i]->toString() << " ";
             return false;
           }
         }
@@ -1097,8 +913,6 @@ struct Puzzle {
         {
           if (!checkCandidates(i, y, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", i, y);
-            //std::cout << initCandidates[i][y]->toString() << " ";
             return false;
           }
         }
@@ -1107,8 +921,6 @@ struct Puzzle {
         {
           if (!checkCandidates(x, i+1, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i+1);
-            //std::cout << initCandidates[x][i+1]->toString() << " ";
             return false;
           }
         }
@@ -1116,8 +928,6 @@ struct Puzzle {
         {
           if (!checkCandidates(i+1, y, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", i+1, y);
-            //std::cout << initCandidates[i+1][y]->toString() << " ";
             return false;
           }
         }
@@ -1126,8 +936,6 @@ struct Puzzle {
         {
           if (!checkCandidates(x, i+2, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i+2);
-            //std::cout << initCandidates[x][i+2]->toString() << " ";
             return false;
           }
         }
@@ -1135,8 +943,6 @@ struct Puzzle {
         {
           if (!checkCandidates(i+2, y, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", i+2, y);
-            //std::cout << initCandidates[i+2][y]->toString() << " ";
             return false;
           }
         }
@@ -1145,8 +951,6 @@ struct Puzzle {
         {
           if (!checkCandidates(x, i+3, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i+3);
-            //std::cout << initCandidates[x][i+3]->toString() << " ";
             return false;
           }
         }
@@ -1154,8 +958,6 @@ struct Puzzle {
         {
           if (!checkCandidates(i+3, y, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", i+3, y);
-            //std::cout << initCandidates[i+3][y]->toString() << " ";
             return false;
           }
         }
@@ -1167,17 +969,13 @@ struct Puzzle {
         {
           if (!checkCandidates(x, i, true)) 
           {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", x, i);
-            //std::cout << initCandidates[x][i]->toString() << " ";
             return false;
           }
         }
         if (!preassigned[i][y]) 
         {
           if (!checkCandidates(i, y, true)) 
-          {
-            //printf("checkNeighborCandidates returning false at: %i, %i\n", i, y);
-            //std::cout << initCandidates[i][y]->toString() << " ";
+          {;
             return false;
           }
         }
@@ -1197,8 +995,6 @@ struct Puzzle {
           {
             if (!checkCandidates(j, k, true)) 
             {
-              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
-              //std::cout << initCandidates[j][k]->toString() << " ";
               return false;
             }
           }
@@ -1207,8 +1003,6 @@ struct Puzzle {
           {
             if (!checkCandidates(j, k+1, true)) 
             {
-              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k+1);
-              //std::cout << initCandidates[j][k+1]->toString() << " ";
               return false;
             }
           }
@@ -1217,8 +1011,6 @@ struct Puzzle {
           {
             if (!checkCandidates(j, k+2, true)) 
             {
-              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k+2);
-              //std::cout << initCandidates[j][k+2]->toString() << " ";
               return false;
             }
           }
@@ -1227,8 +1019,6 @@ struct Puzzle {
           {
             if (!checkCandidates(j, k+3, true)) 
             {
-              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k+3);
-              //std::cout << initCandidates[j][k+3]->toString() << " ";
               return false;
             }
           }
@@ -1240,14 +1030,11 @@ struct Puzzle {
           {
             if (!checkCandidates(j, k, true)) 
             {
-              //printf("checkNeighborCandidates returning false at: %i, %i\n", j, k);
-              //std::cout << initCandidates[j][k]->toString() << " ";
               return false;
             }
           }
         }
       }
-//      printf("checkNeighbor
       return true;
     }
 
@@ -1269,13 +1056,6 @@ struct Puzzle {
     }
     
     int nextCandidate(int x, int y, bool initial) {
-      //printf("nextCandidate for (%i, %i)\n", x, y);
-      //printf("init candidate: \n");
-      //std::cout << initCandidates[x][y]->toString() << "\n";
-      //initCandidates[x][y]->printVectorString();
-      //printf("current candidate: \n");
-      //std::cout << currentCandidates[x][y]->toString() << "\n";
-      //currentCandidates[x][y]->printVectorString();
 
       CandidateList* list;
       if (initial) {
@@ -1288,24 +1068,16 @@ struct Puzzle {
     }
 
     bool isSolved() {
-      // if (currentRow != dim - 1 || currentCol != dim - 1) {
-        // return false;
-      // }
-      
+
       if (positionOnVisited>numUnassigned) return true;
       
       for (int i = 0; i < dim; i++) {
         for (int j = 0; j < dim; j++) {
           if (getCurrentAssigned(i, j) < 1) {
-    //        printf("error: got to end but a number is unassigned\n");
             return false;
           }
         }
       }
-      
-      // if (getCurrentAssigned(dim-1, dim-1) < 1) {
-        // return false;
-      // }
       
       return true;
     }
