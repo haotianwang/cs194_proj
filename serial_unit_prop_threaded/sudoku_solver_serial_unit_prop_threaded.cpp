@@ -168,7 +168,7 @@ int main(int argc, char *argv[]) {
   p->initialize();
 
   int dim = atoi(argv[2]);
-
+  if (dim<16) parallelStartDepth=86;
   
   for (int i = 0; i < 5; i++) {
     int** gridCopy = new2dIntArray(dim);
@@ -299,7 +299,7 @@ int main(int argc, char *argv[]) {
     //printf("deinitialized\n");
     delete p;
 
-    printf("number of branches: %i\n", toSolve.size());
+    printf("number of branches: %i\n", (int)toSolve.size());
 
     if (solved == NULL) {
       solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition, &numTried);
