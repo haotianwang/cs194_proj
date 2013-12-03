@@ -9,7 +9,7 @@
 #include "sudoku_helper_serial_unit_prop_threaded.cpp"
 
 int numThreads = 50;
-int parallelStartDepth = 40;
+int parallelStartDepth = 9999;
 int vectorSizeLimit = 100;
 
 // step 1
@@ -168,25 +168,6 @@ int main(int argc, char *argv[]) {
   p->initialize();
 
   int dim = atoi(argv[2]);
-
-  
-  for (int i = 0; i < 5; i++) {
-    int** gridCopy = new2dIntArray(dim);
-    copy2dIntArray(grid, gridCopy, dim);
-
-    Puzzle* test = new Puzzle(gridCopy, dim);
-    test->initialize();
-
-    
-    Puzzle* testCopy = test->makePreassignedCopy();
-    testCopy->deinitialize();
-    delete testCopy;
-    
-    
-    test->deinitialize();
-    delete test;
-  }
-
   /*  
   p->printGridDim();
   p->printGrid();
