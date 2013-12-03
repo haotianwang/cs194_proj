@@ -8,8 +8,8 @@
 
 #include "sudoku_helper_serial_unit_prop_threaded.cpp"
 
-int numThreads = 50;
-int parallelStartDepth = 9999;
+int numThreads = 64;
+int parallelStartDepth = 40;
 int vectorSizeLimit = 100;
 
 // step 1
@@ -128,7 +128,7 @@ Puzzle* solveInitializedPuzzles(std::vector<Puzzle*>* toSolve, int highestVisite
       thisPuzzleNum = numTried[0];
     }
 
-    printf("attempting to solve initialized puzzle: puzzle num %i\n", thisPuzzleNum);
+    if (testLevel > 1) printf("attempting to solve initialized puzzle: puzzle num %i\n", thisPuzzleNum);
     if (solveInitializedPuzzle(toSolve->at(i), highestVisitedPosition)) {
       #pragma omp critical 
       {
@@ -142,7 +142,7 @@ Puzzle* solveInitializedPuzzles(std::vector<Puzzle*>* toSolve, int highestVisite
       toSolve->at(i)->deinitialize();
       delete toSolve->at(i);
         numTried[0] += 1;
-        printf("led to dead end: puzzle num %i\n", thisPuzzleNum);
+        if (testLevel > 1) printf("led to dead end: puzzle num %i\n", thisPuzzleNum);
     }
   }
   return p;
@@ -168,6 +168,9 @@ int main(int argc, char *argv[]) {
   p->initialize();
 
   int dim = atoi(argv[2]);
+
+  if (dim<16) parallelStartDepth=86;
+  
   /*  
   p->printGridDim();
   p->printGrid();
@@ -206,7 +209,7 @@ int main(int argc, char *argv[]) {
   while (!p->isSolved()) {
 
     if (testLevel > 1 && highestVisitedPosition < p->positionOnVisited) {
-      printf("highestVisitedPosition is now %i\n", p->positionOnVisited);
+      if (testLevel > 1) printf("highestVisitedPosition is now %i\n", p->positionOnVisited);
       highestVisitedPosition = p->positionOnVisited;
     }
     // step 1
@@ -221,7 +224,7 @@ int main(int argc, char *argv[]) {
       }
       toSolve.push_back(forSolving);
 
-      printf("toSolve size: %i\n", (int)toSolve.size());
+      if (testLevel > 1) printf("toSolve size: %i\n", (int)toSolve.size());
 
       if (reverseSlot(p)) {
         currentDepth--;
@@ -232,7 +235,7 @@ int main(int argc, char *argv[]) {
       }
 
       if (toSolve.size() >= vectorSizeLimit) {
-        printf("toSolve reached %i elements, attempting solve now\n", vectorSizeLimit);
+        if (testLevel > 1) printf("toSolve reached %i elements, attempting solve now\n", vectorSizeLimit);
         solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition, &numTried);
         if (solved != NULL) {
           break;
@@ -280,13 +283,13 @@ int main(int argc, char *argv[]) {
     //printf("deinitialized\n");
     delete p;
 
-    printf("number of branches: %i\n", toSolve.size());
+    if (testLevel > 1) printf("number of branches: %i\n", (int)toSolve.size());
 
     if (solved == NULL) {
       solved = solveInitializedPuzzles(&toSolve, highestVisitedPosition, &numTried);
     }
 
-    printf("parallel start depth was %i\n", parallelStartDepth);
+    if (testLevel > 1) printf("parallel start depth was %i\n", parallelStartDepth);
   }
   else {
     solved = p;
