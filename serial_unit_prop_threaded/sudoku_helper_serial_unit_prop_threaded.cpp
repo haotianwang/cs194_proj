@@ -26,6 +26,11 @@ struct CandidateList {
   int dim;
   int num;
   bool init;
+
+  // conflicts as 2 bit binary number.
+  // 11: 0 conflicts. 10: 1 conflict. 01: 2 conflicts. 00: 3 conflicts
+  unsigned int bitZero;
+  unsigned int bitOne;
   
   public:
     CandidateList(int inputDim) {
@@ -52,6 +57,24 @@ struct CandidateList {
       for (i; i < dim; i++) {
         conflicts[i] = 0;
       }
+
+      // vectorization
+      switch (dim) {
+        case 4:
+          bitZero = 0b0000;
+          break;
+        case 9:
+          break;
+        case 16:
+          break;
+        case 25:
+          break;
+        default:
+          printf("invalid dimension for candidatelist: %i\n", dim);
+          exit(1);
+      }
+
+      bitOne = bitZero;
     }
     
     void deinitialize() {
@@ -130,7 +153,7 @@ struct CandidateList {
 
   int nextCandidate() {
     int i;
-    for (i = 0; i < list->dim; i++) {
+    for (i = 0; i < dim; i++) {
       if (conflicts[i] == 0) {
         return i+1;
       }
